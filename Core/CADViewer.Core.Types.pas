@@ -391,7 +391,10 @@ begin
   Result.FIsByLayer := False;
   Result.FIsByBlock := False;
   Result.FIsRgb := True;
-  Result.FRgbValue := TAlphaColorRec.Create(255, R, G, B).Color;
+  Result.FRgbValue := (TAlphaColor($FF000000) or
+    (TAlphaColor(R) shl 16) or
+    (TAlphaColor(G) shl 8) or
+    TAlphaColor(B));
 end;
 
 class function TDxfColor.FromAlphaColor(AColor: TAlphaColor): TDxfColor;
