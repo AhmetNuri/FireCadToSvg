@@ -1,0 +1,66 @@
+<Project xmlns="http://schemas.embarcadero.com/rad/20090503">
+    <ProjectGUID>{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}</ProjectGUID>
+    <MainSource>CADViewer.dpr</MainSource>
+    <Base>True</Base>
+    <Config Condition="'$(Config)'==''">Debug</Config>
+    <Platform Condition="'$(Platform)'==''">Win64</Platform>
+    <FrameworkType>FMX</FrameworkType>
+    <ProjectVersion>20.1</ProjectVersion>
+    <AppType>Application</AppType>
+    <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+        <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
+        <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
+        <DCC_DPIAware>true</DCC_DPIAware>
+        <DCC_Define>DEBUG</DCC_Define>
+        <SanitizedProjectName>CADViewer</SanitizedProjectName>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Debug'">
+        <DCC_Define>DEBUG</DCC_Define>
+        <DCC_Optimize>false</DCC_Optimize>
+        <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+        <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
+        <DCC_RemoteDebug>false</DCC_RemoteDebug>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release'">
+        <DCC_Define>RELEASE</DCC_Define>
+        <DCC_Optimize>true</DCC_Optimize>
+        <DCC_GenerateStackFrames>false</DCC_GenerateStackFrames>
+        <DCC_DebugInfoInExe>false</DCC_DebugInfoInExe>
+        <DCC_RemoteDebug>false</DCC_RemoteDebug>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Platform)'=='Win64'">
+        <DCC_UsePackages>false</DCC_UsePackages>
+    </PropertyGroup>
+    <ItemGroup>
+        <DCCReference Include="Core\CADViewer.Core.Types.pas"/>
+        <DCCReference Include="Core\CADViewer.Core.Interfaces.pas"/>
+        <DCCReference Include="Core\Entities\CADViewer.Core.Entities.pas"/>
+        <DCCReference Include="Core\Models\CADViewer.Core.Models.DrawShapes.pas"/>
+        <DCCReference Include="Core\Models\CADViewer.Core.Models.DxfDocument.pas"/>
+        <DCCReference Include="Utils\CADViewer.Utils.pas"/>
+        <DCCReference Include="Parsers\DXF\CADViewer.Parsers.DXF.Reader.pas"/>
+        <DCCReference Include="Parsers\DXF\CADViewer.Parsers.DXF.Parser.pas"/>
+        <DCCReference Include="Services\FileServices\CADViewer.Services.FileServices.pas"/>
+        <DCCReference Include="Services\Transformation\CADViewer.Services.Transformation.pas"/>
+        <DCCReference Include="Services\Rendering\CADViewer.Services.Rendering.DxfRenderer.pas"/>
+        <DCCReference Include="Controllers\CADViewer.Controllers.DxfViewerController.pas"/>
+        <DCCReference Include="Views\DxfViewer\uFrmDxfViewer.pas">
+            <Form>FrmDxfViewer</Form>
+            <DesignClass>TFrmDxfViewer</DesignClass>
+        </DCCReference>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Delphi.Personality.12</Borland.Personality>
+        <Borland.ProjectType>Application</Borland.ProjectType>
+        <BorlandProject>
+            <Delphi.Personality>
+                <Source>
+                    <Source Name="MainSource">CADViewer.dpr</Source>
+                </Source>
+            </Delphi.Personality>
+        </BorlandProject>
+        <ProjectFileVersion>12</ProjectFileVersion>
+    </ProjectExtensions>
+    <Import Project="$(BDS)\bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\bin\CodeGear.Delphi.Targets')"/>
+    <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
+</Project>
