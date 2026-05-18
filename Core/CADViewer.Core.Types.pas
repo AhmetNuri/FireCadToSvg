@@ -1,4 +1,4 @@
-/// <summary>
+﻿/// <summary>
 /// CADViewer.Core.Types
 /// Temel veri tipleri, kayıtlar (records) ve numaralandırmalar (enumerations).
 /// Tüm katmanlar tarafından kullanılan ortak veri yapıları burada tanımlanır.
