@@ -131,6 +131,24 @@ CADViewer/
 
 ---
 
+## 🧪 Derleme Sorun Giderme (Kısa Kontrol Listesi)
+
+- [ ] Önce **Win32 Debug** ile Build All, ardından Win64 deneyin
+- [ ] Skia4Delphi paketleri IDE'de kurulu ve etkin olsun
+- [ ] `uFrmDxfViewer.pas` uses içinde `FMX.ListBox` mevcut olsun
+- [ ] Project Options → Packages altında platformlar arasında Skia paketleri tutarlı olsun
+- [ ] Eski çıktıları temizleyin (`Win32\Debug`, `Win64\Debug`, `.dcu`, `.dcpil`)
+- [ ] Library/Search Path içinde eski veya çakışan unit klasörleri bulunmasın
+- [ ] `.pas` ve `.fmx` dosyalarında component/event eşleşmeleri doğru olsun
+
+### Sık Hatalar
+
+- `Identifier expected`: Genelde sürüm/sözdizimi uyumsuzluğu, eksik unit veya bozuk `.fmx` eşleşmesi
+- `E2034 Too many actual parameters` (`TAlphaColorRec.Create`): ARGB değeri doğrudan `TAlphaColor` olarak oluşturulmalı
+- `Invalid type cast`: Observer/interface cast noktalarında `Supports(...)` ile güvenli kontrol tercih edilmeli
+
+---
+
 ## 🚀 Gelecek Geliştirmeler
 
 - [ ] DWG format desteği (`TDwgParser` eklenecek, factory hazır)

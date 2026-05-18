@@ -23,6 +23,7 @@ uses
   FMX.Layouts,
   FMX.Controls.Presentation,
   FMX.Objects,
+  FMX.ListBox,
   FMX.Skia,
   Skia,
   CADViewer.Core.Types,

@@ -149,33 +149,41 @@ end;
 procedure TDxfViewerController.NotifyDocumentLoaded(const ATitle: string);
 var
   I: Integer;
+  LObs: IDocumentObserver;
 begin
   for I := 0 to FObservers.Count - 1 do
-    (FObservers[I] as IDocumentObserver).OnDocumentLoaded(ATitle);
+    if Supports(FObservers[I], IDocumentObserver, LObs) then
+      LObs.OnDocumentLoaded(ATitle);
 end;
 
 procedure TDxfViewerController.NotifyDocumentError(const AMessage: string);
 var
   I: Integer;
+  LObs: IDocumentObserver;
 begin
   for I := 0 to FObservers.Count - 1 do
-    (FObservers[I] as IDocumentObserver).OnDocumentError(AMessage);
+    if Supports(FObservers[I], IDocumentObserver, LObs) then
+      LObs.OnDocumentError(AMessage);
 end;
 
 procedure TDxfViewerController.NotifyRenderRequested;
 var
   I: Integer;
+  LObs: IDocumentObserver;
 begin
   for I := 0 to FObservers.Count - 1 do
-    (FObservers[I] as IDocumentObserver).OnRenderRequested;
+    if Supports(FObservers[I], IDocumentObserver, LObs) then
+      LObs.OnRenderRequested;
 end;
 
 procedure TDxfViewerController.NotifyStatusChanged(const AMessage: string);
 var
   I: Integer;
+  LObs: IDocumentObserver;
 begin
   for I := 0 to FObservers.Count - 1 do
-    (FObservers[I] as IDocumentObserver).OnStatusChanged(AMessage);
+    if Supports(FObservers[I], IDocumentObserver, LObs) then
+      LObs.OnStatusChanged(AMessage);
 end;
 
 procedure TDxfViewerController.RequestRedraw;
