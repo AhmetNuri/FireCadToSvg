@@ -1,4 +1,4 @@
-/// <summary>
+﻿/// <summary>
 /// uFrmDxfViewer
 /// DXF görüntüleyici ana formu. Saf UI katmanı.
 /// Tüm işlemler IViewerController üzerinden yapılır.

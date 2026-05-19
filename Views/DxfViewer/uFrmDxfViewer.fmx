@@ -13,144 +13,139 @@ object FrmDxfViewer: TFrmDxfViewer
   OnResize = FormResize
   DesignerMasterStyle = 0
   object LayMain: TLayout
-    Align = alClient
-    Size.Width = 1000.000000000000000
-    Size.Height = 700.000000000000000
+    Size.Width = 1000.000000000000000000
+    Size.Height = 700.000000000000000000
     Size.PlatformDefault = False
+    TabOrder = 0
     object ToolBar1: TToolBar
-      Align = alTop
-      Size.Width = 1000.000000000000000
-      Size.Height = 44.000000000000000
+      Size.Width = 1000.000000000000000000
+      Size.Height = 44.000000000000000000
       Size.PlatformDefault = False
       StyleLookup = 'toolbar'
       TabOrder = 0
       object BtnOpen: TButton
-        Position.X = 4.000000000000000
-        Position.Y = 6.000000000000000
-        Size.Width = 80.000000000000000
-        Size.Height = 32.000000000000000
+        Position.X = 4.000000000000000000
+        Position.Y = 6.000000000000000000
+        Size.Width = 80.000000000000000000
+        Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
-        Text = #1040#231
         TabOrder = 0
+        Text = #1040#231
         OnClick = BtnOpenClick
       end
       object BtnFitToScreen: TButton
-        Position.X = 90.000000000000000
-        Position.Y = 6.000000000000000
-        Size.Width = 100.000000000000000
-        Size.Height = 32.000000000000000
+        Position.X = 90.000000000000000000
+        Position.Y = 6.000000000000000000
+        Size.Width = 100.000000000000000000
+        Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
-        Text = #1042#1077 #1054#1090#1091#1088
         TabOrder = 1
+        Text = #1042
         OnClick = BtnFitToScreenClick
       end
       object BtnResetView: TButton
-        Position.X = 196.000000000000000
-        Position.Y = 6.000000000000000
-        Size.Width = 80.000000000000000
-        Size.Height = 32.000000000000000
+        Position.X = 196.000000000000000000
+        Position.Y = 6.000000000000000000
+        Size.Width = 80.000000000000000000
+        Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
-        Text = #1057#305#1092#305#1088#108a
         TabOrder = 2
+        Text = #1057
         OnClick = BtnResetViewClick
       end
       object BtnZoomIn: TButton
-        Position.X = 282.000000000000000
-        Position.Y = 6.000000000000000
-        Size.Width = 44.000000000000000
-        Size.Height = 32.000000000000000
+        Position.X = 282.000000000000000000
+        Position.Y = 6.000000000000000000
+        Size.Width = 44.000000000000000000
+        Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
-        Text = '  +  '
         TabOrder = 3
+        Text = '  +  '
         OnClick = BtnZoomInClick
       end
       object BtnZoomOut: TButton
-        Position.X = 330.000000000000000
-        Position.Y = 6.000000000000000
-        Size.Width = 44.000000000000000
-        Size.Height = 32.000000000000000
+        Position.X = 330.000000000000000000
+        Position.Y = 6.000000000000000000
+        Size.Width = 44.000000000000000000
+        Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
-        Text = '  -  '
         TabOrder = 4
+        Text = '  -  '
         OnClick = BtnZoomOutClick
       end
       object BtnLayerPanel: TButton
-        Position.X = 380.000000000000000
-        Position.Y = 6.000000000000000
-        Size.Width = 80.000000000000000
-        Size.Height = 32.000000000000000
+        Position.X = 380.000000000000000000
+        Position.Y = 6.000000000000000000
+        Size.Width = 80.000000000000000000
+        Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
-        Text = #1050#1072#116a#1084#1072#1085#1083#1072#1088
         TabOrder = 5
+        Text = 'i'
         OnClick = BtnLayerPanelClick
       end
       object LblZoom: TLabel
-        Position.X = 820.000000000000000
-        Position.Y = 6.000000000000000
-        Size.Width = 160.000000000000000
-        Size.Height = 32.000000000000000
+        Position.X = 820.000000000000000000
+        Position.Y = 6.000000000000000000
+        Size.Width = 160.000000000000000000
+        Size.Height = 32.000000000000000000
         Size.PlatformDefault = False
         Text = 'Zoom: %100'
-        TextSettings.HorzAlign = taCenter
         TabOrder = 6
       end
     end
     object StatusBar1: TStatusBar
-      Align = alBottom
-      Size.Width = 1000.000000000000000
-      Size.Height = 24.000000000000000
+      Position.Y = 676.000000000000000000
+      ShowSizeGrip = True
+      Size.Width = 1000.000000000000000000
+      Size.Height = 24.000000000000000000
       Size.PlatformDefault = False
       object LblStatus: TLabel
-        Align = alClient
-        Size.Width = 980.000000000000000
-        Size.Height = 24.000000000000000
+        Size.Width = 980.000000000000000000
+        Size.Height = 24.000000000000000000
         Size.PlatformDefault = False
-        Text = 'Haz'#305#114
-        TextSettings.HorzAlign = taLeading
+        Text = 'Haz'#305'r'
       end
     end
     object SkPaintBox: TSkPaintBox
-      Align = alClient
-      Size.Width = 1000.000000000000000
-      Size.Height = 632.000000000000000
+      Size.Width = 1000.000000000000000000
+      Size.Height = 632.000000000000000000
       Size.PlatformDefault = False
-      OnDraw = SkPaintBoxDraw
+      OnDblClick = SkPaintBoxDblClick
       OnMouseDown = SkPaintBoxMouseDown
       OnMouseMove = SkPaintBoxMouseMove
       OnMouseUp = SkPaintBoxMouseUp
       OnMouseWheel = SkPaintBoxMouseWheel
-      OnDblClick = SkPaintBoxDblClick
+      OnDraw = SkPaintBoxDraw
     end
     object PanelLayers: TPanel
-      Align = alRight
-      Size.Width = 200.000000000000000
-      Size.Height = 632.000000000000000
+      Size.Width = 200.000000000000000000
+      Size.Height = 632.000000000000000000
       Size.PlatformDefault = False
       Visible = False
       object LblLayers: TLabel
-        Align = alTop
-        Size.Width = 200.000000000000000
-        Size.Height = 28.000000000000000
+        Size.Width = 200.000000000000000000
+        Size.Height = 28.000000000000000000
         Size.PlatformDefault = False
-        Text = #1050#1072#116a#1084#1072#1085#1083#1072#1072#1088
-        TextSettings.HorzAlign = taCenter
-        TextSettings.Font.Style = [TFontStyle.fsBold]
+        Text = #1050
       end
       object BtnCloseLayerPanel: TButton
-        Align = alBottom
-        Size.Width = 200.000000000000000
-        Size.Height = 30.000000000000000
+        Size.Width = 200.000000000000000000
+        Size.Height = 30.000000000000000000
         Size.PlatformDefault = False
         Text = 'Kapat'
         OnClick = BtnCloseLayerPanelClick
       end
       object LayerListBox: TListBox
-        Align = alClient
-        Size.Width = 200.000000000000000
-        Size.Height = 574.000000000000000
+        Size.Width = 200.000000000000000000
+        Size.Height = 574.000000000000000000
         Size.PlatformDefault = False
+        DisableFocusEffect = True
+        DefaultItemStyles.ItemStyle = ''
+        DefaultItemStyles.GroupHeaderStyle = ''
+        DefaultItemStyles.GroupFooterStyle = ''
         OnChange = LayerListBoxChange
-        CheckListBoxItems = True
+        Viewport.Width = 196.000000000000000000
+        Viewport.Height = 570.000000000000000000
       end
     end
   end
