@@ -127,7 +127,7 @@ destructor TDxfViewerController.Destroy;
 begin
   FObservers.Free;
   FDocument.Free;
-  // FRenderer burada serbest bırakılmaz; dışarıdan yönetilir
+  FRenderer.Free;
   inherited Destroy;
 end;
 

@@ -247,9 +247,8 @@ var
 begin
   if FController = nil then Exit;
 
-  // Son fare konumu (FMX'te doğrudan mevcut değil; merkez kullan)
-  LPos.X := SkPaintBox.Width  / 2;
-  LPos.Y := SkPaintBox.Height / 2;
+  // Zoom imleç konumunda yapılır
+  LPos := SkPaintBox.AbsoluteToLocal(Screen.MousePos);
 
   FController.OnZoom(LPos.X, LPos.Y, WheelDelta);
   UpdateZoomLabel;
@@ -275,7 +274,7 @@ procedure TFrmDxfViewer.SkPaintBoxMouseMove(Sender: TObject;
 begin
   if FController = nil then Exit;
 
-  if FDragging and (TShiftState.ssLeft in Shift) then
+  if FDragging and (ssLeft in Shift) then
     FController.OnPanMove(X, Y);
 end;
 
@@ -441,15 +440,15 @@ end;
 procedure TFrmDxfViewer.LayerListBoxChange(Sender: TObject);
 var
   LItem: TListBoxItem;
-  I: Integer;
 begin
   if FController = nil then Exit;
 
-  for I := 0 to LayerListBox.Items.Count - 1 do
-  begin
-    LItem := LayerListBox.ListItems[I];
+  if LayerListBox.ItemIndex < 0 then
+    Exit;
+
+  LItem := LayerListBox.ListItems[LayerListBox.ItemIndex];
+  if LItem <> nil then
     FController.SetLayerVisible(LItem.Text, LItem.IsChecked);
-  end;
 end;
 
 // =========================================================================

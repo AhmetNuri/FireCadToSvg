@@ -22,6 +22,6 @@ uses
 
 begin
   Application.Initialize;
-  Application.CreateForm(TForm6, Form6);
+  Application.CreateForm(TFrmDxfViewer, FrmDxfViewer);
   Application.Run;
 end.

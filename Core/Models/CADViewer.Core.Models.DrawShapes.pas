@@ -316,6 +316,9 @@ type
 
 implementation
 
+uses
+  CADViewer.Utils;
+
 { TDrawStyle }
 
 class function TDrawStyle.Default: TDrawStyle;
@@ -377,7 +380,8 @@ end;
 procedure TDrawArc.CalcBoundsInternal(var ABounds: TBoundingBox);
 var
   StartRad, EndRad: Double;
-  Angle: Double;
+  SweepDeg, AngleDeg, StepDeg: Double;
+  SampleCount, I: Integer;
 begin
   // Başlangıç ve bitiş noktaları her zaman dahil
   StartRad := DegToRad(FStartAngleDeg);
@@ -388,15 +392,19 @@ begin
   ABounds.Expand(FCenter.X + FRadius * Cos(EndRad),
                  FCenter.Y + FRadius * Sin(EndRad));
 
-  // Yayın kapsadığı 0°, 90°, 180°, 270° gibi eksen noktaları varsa dahil et
-  Angle := FStartAngleDeg;
-  while Angle < FEndAngleDeg do
+  // Wrap-around destekli örnekleme
+  SweepDeg := TDxfMathUtils.ArcSweepCCW(FStartAngleDeg, FEndAngleDeg);
+  if SweepDeg <= 0 then
+    Exit;
+
+  SampleCount := Max(4, Ceil(SweepDeg / 15.0));
+  StepDeg := SweepDeg / SampleCount;
+
+  for I := 1 to SampleCount - 1 do
   begin
-    ABounds.Expand(FCenter.X + FRadius * Cos(DegToRad(Angle)),
-                   FCenter.Y + FRadius * Sin(DegToRad(Angle)));
-    Angle := Angle + 90.0;
-    if (Angle > FEndAngleDeg) and (Angle < FEndAngleDeg + 90.0) then
-      Angle := FEndAngleDeg; // son noktayı ekle
+    AngleDeg := FStartAngleDeg + (StepDeg * I);
+    ABounds.Expand(FCenter.X + FRadius * Cos(DegToRad(AngleDeg)),
+                   FCenter.Y + FRadius * Sin(DegToRad(AngleDeg)));
   end;
 end;
 

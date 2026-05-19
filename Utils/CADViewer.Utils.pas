@@ -206,8 +206,8 @@ begin
   FAciTable[69]  := $FF4C4826;
   // 70-79: sarı-yeşil
   FAciTable[70]  := $FFFFFF00;
-  FAciTable[71]  := $FFFF7F;
-  FAciTable[72]  := $FFCC00;
+  FAciTable[71]  := $FFFFFF7F;
+  FAciTable[72]  := $FFCCCC00;
   FAciTable[73]  := $FFCCCC66;
   FAciTable[74]  := $FF999900;
   FAciTable[75]  := $FF99994C;
@@ -515,17 +515,7 @@ var
   I: Integer;
   Buf: string;
 begin
-  Buf := AText;
-  // %%d → °, %%c → ⌀ (çap), %%p → ± (artı-eksi), %%%% → %
-  Buf := StringReplace(Buf, '%%d', '°',  [rfReplaceAll, rfIgnoreCase]);
-  Buf := StringReplace(Buf, '%%D', '°',  [rfReplaceAll]);
-  Buf := StringReplace(Buf, '%%c', '⌀',  [rfReplaceAll, rfIgnoreCase]);
-  Buf := StringReplace(Buf, '%%C', '⌀',  [rfReplaceAll]);
-  Buf := StringReplace(Buf, '%%p', '±',  [rfReplaceAll, rfIgnoreCase]);
-  Buf := StringReplace(Buf, '%%P', '±',  [rfReplaceAll]);
-  Buf := StringReplace(Buf, '%%%%', '%', [rfReplaceAll]);
   // %%nnn → ASCII(nnn)
-  I := 1;
   Buf := '';
   I := 1;
   while I <= Length(AText) do
@@ -545,7 +535,8 @@ begin
     Inc(I);
   end;
   Result := Buf;
-  // Tekrar standart kodları uygula (yukarıdaki döngü sonrası)
+  // Standart DXF escape kodları
+  Result := StringReplace(Result, '%%%%', '%', [rfReplaceAll]);
   Result := StringReplace(Result, '%%d', '°',  [rfReplaceAll, rfIgnoreCase]);
   Result := StringReplace(Result, '%%c', '⌀',  [rfReplaceAll, rfIgnoreCase]);
   Result := StringReplace(Result, '%%p', '±',  [rfReplaceAll, rfIgnoreCase]);
@@ -637,12 +628,12 @@ begin
     6:  Result := 1000.0; // Metre
     7:  Result := 1000000.0; // Kilometre
     8:  Result := 0.0254; // Microinch
-    9:  Result := 0.001;  // Mil (1/1000 inç aslında 0.0254)
+    9:  Result := 0.0254;  // Mil (1/1000 inç)
     10: Result := 914.4;  // Yard
     11: Result := 1e-7;   // Angstrom
     12: Result := 1e-6;   // Nanometre
     13: Result := 1e-3;   // Mikrometre
-    14: Result := 1e6;    // Desimetre
+    14: Result := 100.0;  // Desimetre
     else Result := 1.0;
   end;
 end;

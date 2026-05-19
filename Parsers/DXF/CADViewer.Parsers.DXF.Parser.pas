@@ -203,7 +203,13 @@ begin
     FDocument := TDxfDocument.Create;
     FDocument.FilePath := AFilePath;
     FDocument.FileName := TPath.GetFileName(AFilePath);
-    ParseDocument;
+    try
+      ParseDocument;
+    except
+      FDocument.Free;
+      FDocument := nil;
+      raise;
+    end;
     Result := FDocument;
     FDocument := nil; // Sahipliği caller'a bırak
   finally
@@ -217,7 +223,13 @@ begin
   try
     FDocument := TDxfDocument.Create;
     FDocument.FileName := 'İçerik';
-    ParseDocument;
+    try
+      ParseDocument;
+    except
+      FDocument.Free;
+      FDocument := nil;
+      raise;
+    end;
     Result := FDocument;
     FDocument := nil;
   finally
@@ -451,6 +463,7 @@ var
   LColor: TDxfColor;
   LLType: string;
   LFlags: Integer;
+  LIsOffFromColor: Boolean;
   LLineWeight: Integer;
   LLayer: TDxfLayerInfo;
 begin
@@ -458,6 +471,7 @@ begin
   LColor := TDxfColor.ByLayer;
   LLType := 'CONTINUOUS';
   LFlags := 0;
+  LIsOffFromColor := False;
   LLineWeight := TDxfLineWeight.Default;
 
   while ReadToken(Code, Value) do
@@ -479,7 +493,7 @@ begin
         var N := TDxfStringUtils.TryParseInt(Value, 7);
         if N < 0 then
         begin
-          LFlags := LFlags or 1; // Off
+          LIsOffFromColor := True;
           N := Abs(N);
         end;
         LColor := TDxfColor.FromAci(N);
@@ -496,7 +510,7 @@ begin
   LLayer.Color := LColor;
   LLayer.LineTypeName := LLType;
   LLayer.LineWeight := LLineWeight;
-  LLayer.IsOff := (LFlags and 1) <> 0;
+  LLayer.IsOff := LIsOffFromColor or ((LFlags and 1) <> 0);
   LLayer.Frozen := (LFlags and 4) <> 0;
   LLayer.Locked := (LFlags and 16) <> 0;
   LLayer.Plottable := (LFlags and 512) = 0;
@@ -1526,6 +1540,15 @@ begin
   begin
     if Code = 0 then
     begin
+      if LHaveX and (LCtrlIdx < LCtrlCount) then
+      begin
+        LCtrlPoints[LCtrlIdx].X := LCurrentX;
+        LCtrlPoints[LCtrlIdx].Y := LCurrentY;
+        LCtrlPoints[LCtrlIdx].Z := LCurrentZ;
+        Inc(LCtrlIdx);
+        LHaveX := False;
+      end;
+
       var Token: TDxfToken;
       Token.GroupCode := 0; Token.Value := Value;
       FReader.PushBack(Token);
@@ -1560,6 +1583,13 @@ begin
       end;
       10:
       begin
+        if LHaveX and (LCtrlIdx < LCtrlCount) then
+        begin
+          LCtrlPoints[LCtrlIdx].X := LCurrentX;
+          LCtrlPoints[LCtrlIdx].Y := LCurrentY;
+          LCtrlPoints[LCtrlIdx].Z := LCurrentZ;
+          Inc(LCtrlIdx);
+        end;
         LCurrentX := TDxfStringUtils.TryParseDouble(Value);
         LCurrentY := 0; LCurrentZ := 0;
         LHaveX := True;
@@ -1578,6 +1608,14 @@ begin
         end;
       end;
     end;
+  end;
+
+  if LHaveX and (LCtrlIdx < LCtrlCount) then
+  begin
+    LCtrlPoints[LCtrlIdx].X := LCurrentX;
+    LCtrlPoints[LCtrlIdx].Y := LCurrentY;
+    LCtrlPoints[LCtrlIdx].Z := LCurrentZ;
+    Inc(LCtrlIdx);
   end;
 
   // Kontrol noktalarını 2D'ye çevir
