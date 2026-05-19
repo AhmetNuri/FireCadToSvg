@@ -210,7 +210,7 @@ begin
 
   // Opacity
   if AStyle.Opacity < 1.0 then
-    LPaint.AlphafF := AStyle.Opacity;
+    LPaint.AlphaF := AStyle.Opacity;
 
   ApplyLineType(LPaint, AStyle, AViewport);
   Result := LPaint;
@@ -226,7 +226,7 @@ begin
   LPaint.Color := SkColorFromAlpha(AStyle.FillColor);
   LPaint.AntiAlias := FAntiAlias;
   if AStyle.Opacity < 1.0 then
-    LPaint.AlphafF := AStyle.Opacity;
+    LPaint.AlphaF := AStyle.Opacity;
   Result := LPaint;
 end;
 
@@ -727,7 +727,7 @@ procedure TSkiaRenderer.RenderComposite(AShape: TDrawComposite;
 var
   LChild: TDrawShape;
   LInsertScreen: TPointF;
-  LOriginalBounds: TBoundingBox;
+  LBaseScreen: TPointF;
 begin
   // Blok içeriğini doküman üzerinden bul ve render et
   if (FDocument <> nil) and (AShape.BlockName <> '') then
@@ -739,6 +739,14 @@ begin
       FCanvas.Save;
       try
         LInsertScreen := AViewport.WorldToScreen(AShape.InsertionPoint);
+        LBaseScreen := AViewport.WorldToScreen(LBlock.BasePoint);
+
+        // Önce blok taban noktasını insert noktasına taşı
+        FCanvas.Translate(
+          LInsertScreen.X - LBaseScreen.X,
+          LInsertScreen.Y - LBaseScreen.Y);
+
+        // Sonra insert noktası etrafında dönüşüm uygula
         FCanvas.Translate(LInsertScreen.X, LInsertScreen.Y);
         FCanvas.Rotate(-AShape.RotationDeg);
         FCanvas.Scale(AShape.ScaleX, AShape.ScaleY);
