@@ -14,13 +14,11 @@ interface
 uses
   System.Classes,
   System.Generics.Collections,
-  CADViewer.Core.Types;
+  CADViewer.Core.Types,
+  CADViewer.Core.Models.DrawShapes,
+  CADViewer.Core.Models.DxfDocument;
 
 type
-  // İleri bildirimler
-  TDxfDocument = class;
-  TDrawShape   = class;
-  TDrawShapeList = TObjectList<TDrawShape>;
 
   // =========================================================================
   // IDxfReader — Düşük seviye DXF okuyucu
