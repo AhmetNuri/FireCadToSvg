@@ -259,7 +259,9 @@ begin
   var LListD := TList<string>.Create;
   var LListP := TList<string>.Create;
   try
-    var LText := AContent.Replace(#13#10, #10).Replace(#13, #10);
+    var LText := StringReplace(
+      StringReplace(AContent, #13#10, #10, [rfReplaceAll]),
+      #13, #10, [rfReplaceAll]);
     var LAll := LText.Split([#10]);
     LCount := Length(LAll);
     for I := 0 to LCount - 1 do
