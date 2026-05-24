@@ -1,0 +1,35 @@
+ISO-10303-21;
+HEADER;
+FILE_DESCRIPTION(('ZigZag Curve 10mm'),'2;1');
+FILE_NAME('zigzag_10mm.stp','2026-05-24T00:00:00',('ChatGPT'),('OpenAI'), '','', '');
+FILE_SCHEMA(('AUTOMOTIVE_DESIGN'));
+ENDSEC;
+
+DATA;
+
+/* Points */
+#1 = CARTESIAN_POINT('',(0.0,0.0,0.0));
+#2 = CARTESIAN_POINT('',(2.0,1.0,0.0));
+#3 = CARTESIAN_POINT('',(4.0,-1.0,0.0));
+#4 = CARTESIAN_POINT('',(6.0,1.0,0.0));
+#5 = CARTESIAN_POINT('',(8.0,-1.0,0.0));
+#6 = CARTESIAN_POINT('',(10.0,0.0,0.0));
+
+/* Polyline as B-spline degree 1 */
+#10 = B_SPLINE_CURVE_WITH_KNOTS('',1,
+(#1,#2,#3,#4,#5,#6),
+.UNSPECIFIED.,.F.,.F.,
+(2,2,2,2,2,2),
+(0.0,1.0,2.0,3.0,4.0,5.0),
+.UNSPECIFIED.);
+
+/* Styling - red color */
+#20 = COLOUR_RGB('',1.0,0.0,0.0);
+#21 = CURVE_STYLE('',#20,1.0);
+#22 = PRESENTATION_STYLE_ASSIGNMENT((#21));
+
+/* Geometric curve representation */
+#30 = GEOMETRIC_CURVE_SET('',(#10));
+
+ENDSEC;
+END-ISO-10303-21;
