@@ -135,7 +135,8 @@ implementation
 
 uses
   System.IOUtils,
-  System.UITypes;
+  System.UITypes,
+  CADViewer.Parsers.STEP.Parser;
 
 // =========================================================================
 // TParserFactory
@@ -171,8 +172,7 @@ begin
       raise EUnsupportedFormatError.Create(
         'IGES format desteği henüz eklenmemiştir.');
     TCadFileFormat.ffStep:
-      raise EUnsupportedFormatError.Create(
-        'STEP format desteği henüz eklenmemiştir.');
+      Result := TStepParser.Create;
     else
       raise EUnsupportedFormatError.Create(
         'Bilinmeyen veya desteklenmeyen dosya formatı.');
