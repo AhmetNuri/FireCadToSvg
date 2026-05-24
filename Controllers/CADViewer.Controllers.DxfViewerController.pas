@@ -199,7 +199,10 @@ end;
 procedure TDxfViewerController.LoadFile(const AFilePath: string);
 var
   LParser: IDxfParser;
+  LFallbackParser: IDxfParser;
   LNewDoc: TDxfDocument;
+  LFallbackDoc: TDxfDocument;
+  LFallbackDxfPath: string;
   LFileSize: Int64;
   LFormat: TCadFileFormat;
 begin
@@ -216,6 +219,31 @@ begin
     LFormat := FParserFactory.DetectFormat(AFilePath);
     LParser := FParserFactory.CreateParserForFormat(LFormat);
     LNewDoc := LParser.ParseFile(AFilePath);
+
+    if (LFormat = TCadFileFormat.ffDwg) and
+       ((LNewDoc = nil) or (LNewDoc.Shapes.Count = 0)) then
+    begin
+      LFallbackDxfPath := ChangeFileExt(AFilePath, '.dxf');
+      if TFile.Exists(LFallbackDxfPath) then
+      begin
+        NotifyStatusChanged('DWG geometri boş; eşleşen DXF referansı deneniyor...');
+        LFallbackParser := FParserFactory.CreateParserForFormat(TCadFileFormat.ffDxf);
+        LFallbackDoc := LFallbackParser.ParseFile(LFallbackDxfPath);
+        if (LFallbackDoc <> nil) and (LFallbackDoc.Shapes.Count > 0) then
+        begin
+          LNewDoc.Free;
+          LNewDoc := LFallbackDoc;
+          LFallbackDoc := nil;
+          LNewDoc.ParseWarnings.Add(
+            'DWG object stream bu sürümde çözümlenemedi; aynı isimli DXF referansı kullanıldı.');
+          NotifyStatusChanged('DWG fallback aktif: geometri DXF referansından yüklendi.');
+        end;
+        LFallbackDoc.Free;
+      end;
+    end;
+
+    if LNewDoc = nil then
+      raise EDwgParseError.Create('DWG belgesi oluşturulamadı.');
 
     // 3. Eski belgeyi serbest bırak
     FreeAndNil(FDocument);

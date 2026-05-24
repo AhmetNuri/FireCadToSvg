@@ -220,6 +220,11 @@ begin
       LOffsets.Free;
     end;
 
+    if FDocument.Shapes.Count = 0 then
+      AddWarning(Format(
+        'DWG geometri üretilemedi (version=%s, objDataOfs=%d, objDataSize=%d, objMapOfs=%d, objMapSize=%d).',
+        [FVersion, FObjDataOffset, FObjDataSize, FObjMapOffset, FObjMapSize]));
+
     for LW in FWarnings do
       FDocument.ParseWarnings.Add(LW);
 
@@ -414,6 +419,7 @@ var
   LSectionData: TBytes;
   LObjSize: Cardinal;
   LObjStart, LAfterMs: Integer;
+  LBeforeCount: Integer;
 begin
   if (FObjDataOffset <= 0) or (FileSize <= FObjDataOffset) then Exit;
 
@@ -428,6 +434,7 @@ begin
 
   LR := TDwgBitReader.Create(LSectionData);
   try
+    LBeforeCount := FDocument.Shapes.Count;
     while not LR.AtEnd do
     begin
       LObjStart := LR.BytePos;
@@ -436,8 +443,19 @@ begin
       LObjSize := LR.MS;
       LAfterMs := LR.BytePos; // MS header'ından sonraki konum
 
-      if LObjSize = 0 then Break;
-      if Integer(LObjSize) > LR.BytesLeft then Break;
+      if LObjSize = 0 then
+      begin
+        AddWarning(Format('ObjectData sıralı tarama durdu: objSize=0 (ofs=%d).',
+          [LObjStart]));
+        Break;
+      end;
+      if Integer(LObjSize) > LR.BytesLeft then
+      begin
+        AddWarning(Format(
+          'ObjectData sıralı tarama durdu: objSize=%d, bytesLeft=%d (ofs=%d).',
+          [LObjSize, LR.BytesLeft, LObjStart]));
+        Break;
+      end;
 
       try
         ParseObjectAt(LObjStart);
@@ -448,6 +466,9 @@ begin
       // Sonraki nesneye: MS header bitişi + nesne verisi + 2-byte CRC
       LR.SeekByte(LAfterMs + Integer(LObjSize) + 2);
     end;
+
+    if (FDocument.Shapes.Count = LBeforeCount) then
+      AddWarning('ObjectData sıralı taramada parse edilen entity bulunamadı.');
   finally
     LR.Free;
   end;
@@ -521,6 +542,7 @@ begin
     begin
       ApplyStyle(LShape, LLayerName);
       FDocument.AddShape(LShape);
+      FDocument.IncrementEntityCount;
     end;
 
   except
