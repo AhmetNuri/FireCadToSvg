@@ -331,6 +331,11 @@ type
   /// </summary>
   EStepParseError = class(ECadViewerError);
 
+  /// <summary>
+  /// Geçersiz veya bozuk DWG dosyası.
+  /// </summary>
+  EDwgParseError = class(ECadViewerError);
+
 implementation
 
 { EDxfParseError }

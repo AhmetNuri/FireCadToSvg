@@ -218,7 +218,9 @@ end;
 
 function TFileService.GetSupportedExtensions: TArray<string>;
 begin
-  Result := ['.dxf', '.DXF', '.step', '.STEP', '.stp', '.STP',
+  Result := ['.dxf', '.DXF',
+             '.dwg', '.DWG',
+             '.step', '.STEP', '.stp', '.STP',
              '.igs', '.IGS', '.iges', '.IGES'];
 end;
 

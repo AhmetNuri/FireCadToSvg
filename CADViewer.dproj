@@ -258,6 +258,8 @@
         <DCCReference Include="Parsers\DXF\CADViewer.Parsers.DXF.Parser.pas"/>
         <DCCReference Include="Parsers\DXF\CADViewer.Parsers.DXF.Reader.pas"/>
         <DCCReference Include="Parsers\STEP\CADViewer.Parsers.STEP.Parser.pas"/>
+        <DCCReference Include="Parsers\DWG\CADViewer.Parsers.DWG.BitReader.pas"/>
+        <DCCReference Include="Parsers\DWG\CADViewer.Parsers.DWG.Parser.pas"/>
         <DCCReference Include="Services\FileServices\CADViewer.Services.FileServices.pas"/>
         <DCCReference Include="Services\Rendering\CADViewer.Services.Rendering.DxfRenderer.pas"/>
         <DCCReference Include="Services\Transformation\CADViewer.Services.Transformation.pas"/>

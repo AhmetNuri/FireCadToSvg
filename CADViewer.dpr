@@ -12,6 +12,8 @@ uses
   CADViewer.Parsers.DXF.Parser in 'Parsers\DXF\CADViewer.Parsers.DXF.Parser.pas',
   CADViewer.Parsers.DXF.Reader in 'Parsers\DXF\CADViewer.Parsers.DXF.Reader.pas',
   CADViewer.Parsers.STEP.Parser in 'Parsers\STEP\CADViewer.Parsers.STEP.Parser.pas',
+  CADViewer.Parsers.DWG.BitReader in 'Parsers\DWG\CADViewer.Parsers.DWG.BitReader.pas',
+  CADViewer.Parsers.DWG.Parser in 'Parsers\DWG\CADViewer.Parsers.DWG.Parser.pas',
   CADViewer.Services.FileServices in 'Services\FileServices\CADViewer.Services.FileServices.pas',
   CADViewer.Services.Rendering.DxfRenderer in 'Services\Rendering\CADViewer.Services.Rendering.DxfRenderer.pas',
   CADViewer.Services.Export.SvgExporter in 'Services\Export\CADViewer.Services.Export.SvgExporter.pas',

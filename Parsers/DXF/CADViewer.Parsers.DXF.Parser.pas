@@ -137,7 +137,8 @@ implementation
 uses
   System.IOUtils,
 
-  CADViewer.Parsers.STEP.Parser;
+  CADViewer.Parsers.STEP.Parser,
+  CADViewer.Parsers.DWG.Parser;
 
 // =========================================================================
 // TParserFactory
@@ -167,8 +168,7 @@ begin
     TCadFileFormat.ffDxf:
       Result := TDxfParser.Create;
     TCadFileFormat.ffDwg:
-      raise EUnsupportedFormatError.Create(
-        'DWG format desteği henüz eklenmemiştir.');
+      Result := TDwgParser.Create;
     TCadFileFormat.ffIges:
       Result := TStepParser.Create;
     TCadFileFormat.ffStep:
