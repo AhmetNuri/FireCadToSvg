@@ -296,6 +296,11 @@ begin
       NotifyDocumentError('STEP ayrıştırma hatası: ' + E.Message);
       NotifyStatusChanged('Ayrıştırma hatası: ' + E.Message);
     end;
+    on E: EIgesParseError do
+    begin
+      NotifyDocumentError('IGES ayrıştırma hatası: ' + E.Message);
+      NotifyStatusChanged('Ayrıştırma hatası: ' + E.Message);
+    end;
     on E: EDwgParseError do
     begin
       NotifyDocumentError('DWG ayrıştırma hatası: ' + E.Message);

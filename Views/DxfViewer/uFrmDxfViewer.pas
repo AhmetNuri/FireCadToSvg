@@ -155,11 +155,11 @@ begin
 
   // OpenDialog filtresi
   OpenDialog1.Filter :=
-    'Desteklenen CAD Dosyaları (*.dxf;*.dwg;*.step;*.stp;*.iges;*.igs)|' +
-    '*.dxf;*.dwg;*.step;*.stp;*.iges;*.igs|' +
+    'Desteklenen CAD Dosyaları (*.dxf;*.dwg;*.step;*.stp;*.iges;*.igs;*.IGES;*.IGS)|' +
+    '*.dxf;*.dwg;*.step;*.stp;*.iges;*.igs;*.IGES;*.IGS|' +
     'DXF Dosyaları (*.dxf)|*.dxf|' +
     'DWG Dosyaları (*.dwg)|*.dwg|' +
-    'STEP/IGES Dosyaları (*.step;*.stp;*.iges;*.igs)|*.step;*.stp;*.iges;*.igs|' +
+    'STEP/IGES Dosyaları (*.step;*.stp;*.iges;*.igs;*.IGES;*.IGS)|*.step;*.stp;*.iges;*.igs;*.IGES;*.IGS|' +
     'Tüm Dosyalar (*.*)|*.*';
   OpenDialog1.Title := 'CAD Dosyası Aç';
 

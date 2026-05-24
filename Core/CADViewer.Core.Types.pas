@@ -88,7 +88,7 @@ type
     ffUnknown,
     ffDxf,
     ffDwg,    // Desteklenir (R2000+ binary)
-    ffIges,   // STEP parser hattı ile desteklenir
+    ffIges,   // Desteklenir
     ffStep    // Desteklenir
   );
 

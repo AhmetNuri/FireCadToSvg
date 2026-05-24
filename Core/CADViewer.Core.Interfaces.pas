@@ -332,6 +332,11 @@ type
   EStepParseError = class(ECadViewerError);
 
   /// <summary>
+  /// Geçersiz veya bozuk IGES dosyası.
+  /// </summary>
+  EIgesParseError = class(ECadViewerError);
+
+  /// <summary>
   /// Geçersiz veya bozuk DWG dosyası.
   /// </summary>
   EDwgParseError = class(ECadViewerError);
