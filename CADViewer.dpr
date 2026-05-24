@@ -11,6 +11,7 @@ uses
   CADViewer.Core.Models.DxfDocument in 'Core\Models\CADViewer.Core.Models.DxfDocument.pas',
   CADViewer.Parsers.DXF.Parser in 'Parsers\DXF\CADViewer.Parsers.DXF.Parser.pas',
   CADViewer.Parsers.DXF.Reader in 'Parsers\DXF\CADViewer.Parsers.DXF.Reader.pas',
+  CADViewer.Parsers.IGES.Parser in 'Parsers\IGES\CADViewer.Parsers.IGES.Parser.pas',
   CADViewer.Parsers.STEP.Parser in 'Parsers\STEP\CADViewer.Parsers.STEP.Parser.pas',
   CADViewer.Parsers.DWG.BitReader in 'Parsers\DWG\CADViewer.Parsers.DWG.BitReader.pas',
   CADViewer.Parsers.DWG.Parser in 'Parsers\DWG\CADViewer.Parsers.DWG.Parser.pas',

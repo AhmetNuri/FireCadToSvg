@@ -21,8 +21,10 @@ CADViewer/
 │   ├── DXF/
 │   │   ├── CADViewer.Parsers.DXF.Reader.pas  ← Düşük seviye DXF token okuyucu
 │   │   └── CADViewer.Parsers.DXF.Parser.pas  ← Yüksek seviye DXF ayrıştırıcı + TParserFactory
-│   └── STEP/
-│       └── CADViewer.Parsers.STEP.Parser.pas ← STEP/IGES parser
+│   ├── STEP/
+│   │   └── CADViewer.Parsers.STEP.Parser.pas ← STEP parser
+│   └── IGES/
+│       └── CADViewer.Parsers.IGES.Parser.pas ← IGES parser
 │
 ├── Services/
 │   ├── FileServices/
@@ -100,7 +102,7 @@ CADViewer/
 
 ---
 
-### STEP / IGES (ASCII STEP yapısı)
+### STEP / IGES
 
 | Entity | Durum |
 |--------|-------|

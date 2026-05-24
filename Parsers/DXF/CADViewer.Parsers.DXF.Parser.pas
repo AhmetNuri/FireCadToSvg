@@ -138,6 +138,7 @@ uses
   System.IOUtils,
 
   CADViewer.Parsers.STEP.Parser,
+  CADViewer.Parsers.IGES.Parser,
   CADViewer.Parsers.DWG.Parser;
 
 // =========================================================================
@@ -170,7 +171,7 @@ begin
     TCadFileFormat.ffDwg:
       Result := TDwgParser.Create;
     TCadFileFormat.ffIges:
-      Result := TStepParser.Create;
+      Result := TIgesParser.Create;
     TCadFileFormat.ffStep:
       Result := TStepParser.Create;
     else
