@@ -216,7 +216,7 @@ end;
 
 function TFileService.GetSupportedExtensions: TArray<string>;
 begin
-  Result := ['.dxf', '.DXF'];
+  Result := ['.dxf', '.DXF', '.step', '.STEP', '.stp', '.STP'];
 end;
 
 function TFileService.GetFileSize(const AFilePath: string): Int64;

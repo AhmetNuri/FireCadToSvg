@@ -147,7 +147,7 @@ begin
   SkPaintBox.HitTest := True;
 
   // Durum
-  LblStatus.Text := 'DXF dosyası açmak için "Aç" düğmesine tıklayın.';
+  LblStatus.Text := 'CAD dosyası açmak için "Aç" düğmesine tıklayın (DXF, STEP).';
   LblZoom.Text := 'Zoom: %100';
 
   // Katman panelini gizle
@@ -155,10 +155,11 @@ begin
 
   // OpenDialog filtresi
   OpenDialog1.Filter :=
-    'Desteklenen CAD Dosyaları (*.dxf)|*.dxf|' +
+    'Desteklenen CAD Dosyaları (*.dxf;*.step;*.stp)|*.dxf;*.step;*.stp|' +
     'DXF Dosyaları (*.dxf)|*.dxf|' +
+    'STEP Dosyaları (*.step;*.stp)|*.step;*.stp|' +
     'Tüm Dosyalar (*.*)|*.*';
-  OpenDialog1.Title := 'DXF Dosyası Aç';
+  OpenDialog1.Title := 'CAD Dosyası Aç';
 
   // Klavye alabilmek için
   Self.KeyPreview := True;

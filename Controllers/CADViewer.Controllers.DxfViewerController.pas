@@ -243,6 +243,11 @@ begin
       NotifyDocumentError('DXF ayrıştırma hatası: ' + E.Message);
       NotifyStatusChanged('Ayrıştırma hatası: ' + E.Message);
     end;
+    on E: EStepParseError do
+    begin
+      NotifyDocumentError('STEP ayrıştırma hatası: ' + E.Message);
+      NotifyStatusChanged('Ayrıştırma hatası: ' + E.Message);
+    end;
     on E: EUnsupportedFormatError do
     begin
       NotifyDocumentError('Desteklenmeyen format: ' + E.Message);

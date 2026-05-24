@@ -309,6 +309,11 @@ type
   /// </summary>
   EUnsupportedFormatError = class(ECadViewerError);
 
+  /// <summary>
+  /// Geçersiz veya bozuk STEP dosyası.
+  /// </summary>
+  EStepParseError = class(ECadViewerError);
+
 implementation
 
 { EDxfParseError }
