@@ -170,8 +170,7 @@ begin
       raise EUnsupportedFormatError.Create(
         'DWG format desteği henüz eklenmemiştir.');
     TCadFileFormat.ffIges:
-      raise EUnsupportedFormatError.Create(
-        'IGES format desteği henüz eklenmemiştir.');
+      Result := TStepParser.Create;
     TCadFileFormat.ffStep:
       Result := TStepParser.Create;
     else

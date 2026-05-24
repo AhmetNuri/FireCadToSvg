@@ -218,15 +218,17 @@ end;
 
 function TFileService.GetSupportedExtensions: TArray<string>;
 begin
-  Result := ['.dxf', '.DXF', '.step', '.STEP', '.stp', '.STP'];
+  Result := ['.dxf', '.DXF', '.step', '.STEP', '.stp', '.STP',
+             '.igs', '.IGS', '.iges', '.IGES'];
 end;
 
 function TFileService.GetFileSize(const AFilePath: string): Int64;
 begin
+  var LStream := TFileStream.Create(AFilePath, fmOpenRead or fmShareDenyNone);
   try
-//    Result := TFileInfo.Create(AFilePath).Length;
-  except
-    Result := 0;
+    Result := LStream.Size;
+  finally
+    LStream.Free;
   end;
 end;
 

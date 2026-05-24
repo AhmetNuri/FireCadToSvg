@@ -151,6 +151,8 @@ type
 
     /// <summary>Bağımsız bir CIRCLE entity'sini dönüştürür.</summary>
     function BuildStandaloneCircle(AId: Integer): TDrawShape;
+    /// <summary>Bağımsız bir LINE entity'sini dönüştürür.</summary>
+    function BuildStandaloneLine(AId: Integer): TDrawShape;
 
     /// <summary>Placement ve yarıçaptan TDrawCircle oluşturur.</summary>
     function BuildCircleShape(const APlacement: TStepPlacement;
@@ -259,8 +261,19 @@ begin
   FDocument := TDxfDocument.Create;
   FDocument.EnsureLayer(STEP_DEFAULT_LAYER);
 
+  var LUpper := UpperCase(AContent);
+  if Pos('ISO-10303-21', LUpper) = 0 then
+    AddWarning('STEP başlığı (ISO-10303-21) bulunamadı.');
+  if Pos('HEADER;', LUpper) = 0 then
+    AddWarning('STEP HEADER bölümü bulunamadı.');
+  if Pos('DATA;', LUpper) = 0 then
+    raise EStepParseError.Create('STEP DATA bölümü bulunamadı.');
+
   ScanDataSection(AContent);
   ResolveGeometry;
+
+  if Pos('END-ISO-10303-21', LUpper) = 0 then
+    AddWarning('STEP dosya sonu işareti (END-ISO-10303-21) bulunamadı.');
 
   Result    := FDocument;
   FDocument := nil; // sahiplik çağırana geçiyor
@@ -285,12 +298,14 @@ var
   InString: Boolean;
   Data: TEntityData;
   DataPos: Integer;
+  LUpperContent: string;
 begin
   N := Length(AContent);
+  LUpperContent := UpperCase(AContent);
 
   // DATA; bölümünü bul
-  DataPos := Pos('DATA;', AContent);
-  if DataPos = 0 then DataPos := Pos('DATA ;', AContent);
+  DataPos := Pos('DATA;', LUpperContent);
+  if DataPos = 0 then DataPos := Pos('DATA ;', LUpperContent);
   if DataPos = 0 then
   begin
     AddWarning('STEP DATA bölümü bulunamadı.');
@@ -326,10 +341,7 @@ begin
     end;
 
     // ENDSEC kontrolü
-    if (I + 5 <= N) and
-       (AContent[I]   = 'E') and (AContent[I+1] = 'N') and
-       (AContent[I+2] = 'D') and (AContent[I+3] = 'S') and
-       (AContent[I+4] = 'E') and (AContent[I+5] = 'C') then
+    if (I + 5 <= N) and (UpperCase(Copy(AContent, I, 6)) = 'ENDSEC') then
       Break;
 
     // Entity bildirimi: #ID = TYPE_NAME(params);
@@ -1154,6 +1166,45 @@ begin
   FConverted.AddOrSetValue(AId, True);
 end;
 
+function TStepParser.BuildStandaloneLine(AId: Integer): TDrawShape;
+var
+  LTypeName, LVecTypeName: string;
+  LParams, LVecParams: TArray<string>;
+  LStartRef, LVecRef, LDirRef: Integer;
+  LStartPoint, LDir: TPoint3D;
+  LMagnitude: Double;
+  LShape: TDrawLine;
+begin
+  Result := nil;
+  if not GetEntityParams(AId, LTypeName, LParams) then Exit;
+  if LTypeName <> 'LINE' then Exit;
+  if Length(LParams) < 3 then Exit;
+
+  // LINE('name', #start_point, #vector)
+  LStartRef := ParseRef(LParams[1]);
+  LVecRef   := ParseRef(LParams[2]);
+  if (LStartRef <= 0) or (LVecRef <= 0) then Exit;
+
+  if not GetEntityParams(LVecRef, LVecTypeName, LVecParams) then Exit;
+  if (LVecTypeName <> 'VECTOR') or (Length(LVecParams) < 3) then Exit;
+
+  LDirRef := ParseRef(LVecParams[1]);
+  if (LDirRef <= 0) or (not ParseNum(LVecParams[2], LMagnitude)) then Exit;
+
+  LStartPoint := GetPoint(LStartRef);
+  LDir := GetDirection(LDirRef);
+
+  LShape := TDrawLine.Create;
+  LShape.StartPoint := LStartPoint.To2D;
+  LShape.EndPoint := TPoint2D.Create(
+    LStartPoint.X + LDir.X * LMagnitude,
+    LStartPoint.Y + LDir.Y * LMagnitude);
+  LShape.Style := MakeDefaultStyle;
+
+  FConverted.AddOrSetValue(AId, True);
+  Result := LShape;
+end;
+
 // ===========================================================================
 // Üst seviye traversal
 // ===========================================================================
@@ -1201,6 +1252,8 @@ begin
     end
     else if LCurveTypeName = 'CIRCLE' then
       LShape := BuildStandaloneCircle(LRefId)
+    else if LCurveTypeName = 'LINE' then
+      LShape := BuildStandaloneLine(LRefId)
     else if LCurveTypeName = 'ELLIPSE' then
     begin
       if Length(LCurveParams) >= 4 then
@@ -1311,6 +1364,8 @@ begin
 
       if LTN = 'CIRCLE' then
         LShape := BuildStandaloneCircle(LPair.Key)
+      else if LTN = 'LINE' then
+        LShape := BuildStandaloneLine(LPair.Key)
 
       else if LTN = 'TRIMMED_CURVE' then
       begin

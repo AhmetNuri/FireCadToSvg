@@ -202,6 +202,20 @@ type
   end;
 
   // =========================================================================
+  // ISvgExporter — DrawShape listesini SVG'ye dönüştürür
+  // =========================================================================
+
+  /// <summary>
+  /// Ortak şekil modelini SVG çıktısına çevirir.
+  /// DXF ve STEP parser'larından bağımsız çalışır.
+  /// </summary>
+  ISvgExporter = interface
+    ['{2D911D7B-7C12-4B49-9552-20FE960DC4AD}']
+    function ExportShapesToSvg(AShapes: TDrawShapeList;
+      const ABounds: TBoundingBox): string;
+  end;
+
+  // =========================================================================
   // IViewerController — MVC Controller arayüzü
   // =========================================================================
 
