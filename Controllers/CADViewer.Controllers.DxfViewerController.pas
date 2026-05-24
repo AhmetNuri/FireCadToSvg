@@ -225,7 +225,8 @@ begin
 
     if Assigned(FSvgExporter) then
     begin
-      if LFormat in [TCadFileFormat.ffStep, TCadFileFormat.ffIges] then
+      if LFormat in [TCadFileFormat.ffStep, TCadFileFormat.ffIges,
+                     TCadFileFormat.ffDwg] then
         FLastGeneratedSvg := FSvgExporter.ExportShapesToSvg(
           FDocument.Shapes, FDocument.GetBounds)
       else
@@ -265,6 +266,11 @@ begin
     on E: EStepParseError do
     begin
       NotifyDocumentError('STEP ayrıştırma hatası: ' + E.Message);
+      NotifyStatusChanged('Ayrıştırma hatası: ' + E.Message);
+    end;
+    on E: EDwgParseError do
+    begin
+      NotifyDocumentError('DWG ayrıştırma hatası: ' + E.Message);
       NotifyStatusChanged('Ayrıştırma hatası: ' + E.Message);
     end;
     on E: EUnsupportedFormatError do

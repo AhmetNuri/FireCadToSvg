@@ -87,7 +87,7 @@ type
   TCadFileFormat = (
     ffUnknown,
     ffDxf,
-    ffDwg,    // Gelecek destek
+    ffDwg,    // Desteklenir (R2000+ binary)
     ffIges,   // STEP parser hattı ile desteklenir
     ffStep    // Desteklenir
   );
