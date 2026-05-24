@@ -64,6 +64,7 @@ type
     // --- Yardımcılar ---
     procedure AddWarning(const AMsg: string);
     function  FileSize: Integer; inline;
+    function  TryReadAsciiSignature(out ASignature: string): Boolean;
     function  SafeReadInt32(AOffset: Integer): Integer;
     function  InternalParse: TDxfDocument;
 
@@ -138,9 +139,8 @@ end;
 
 function TDwgParser.ParseContent(const AContent: string): TDxfDocument;
 begin
-  // DWG ikili format; string içerik Latin-1 byte olarak yorumlanır
-  FData := TEncoding.GetEncoding(28591).GetBytes(AContent);
-  Result := InternalParse;
+  raise EDwgParseError.Create(
+    'DWG ikili formattır; ParseContent desteklenmez. ParseFile kullanın.');
 end;
 
 function TDwgParser.GetWarnings: TArray<string>;
@@ -160,6 +160,26 @@ end;
 function TDwgParser.FileSize: Integer;
 begin
   Result := Length(FData);
+end;
+
+function TDwgParser.TryReadAsciiSignature(out ASignature: string): Boolean;
+var
+  I: Integer;
+  B: Byte;
+begin
+  Result := False;
+  ASignature := '';
+  if FileSize < 6 then Exit;
+
+  SetLength(ASignature, 6);
+  for I := 0 to 5 do
+  begin
+    B := FData[I];
+    if (B < 32) or (B > 126) then
+      Exit;
+    ASignature[I + 1] := Char(AnsiChar(B));
+  end;
+  Result := True;
 end;
 
 function TDwgParser.SafeReadInt32(AOffset: Integer): Integer;
@@ -219,15 +239,20 @@ end;
 procedure TDwgParser.ParseHeader;
 var
   LMagic: string;
+  LVersionNumber: Integer;
 begin
   if FileSize < 6 then
     raise EDwgParseError.Create('DWG dosyası çok küçük (< 6 byte).');
 
-  SetLength(LMagic, 6);
-  Move(FData[0], LMagic[1], 6);
+  if not TryReadAsciiSignature(LMagic) then
+    raise EDwgParseError.CreateFmt(
+      'Geçersiz DWG başlığı: %x %x %x %x %x %x (ASCII imza okunamadı).',
+      [FData[0], FData[1], FData[2], FData[3], FData[4], FData[5]]);
+
   FVersion := LMagic;
 
-  if not LMagic.StartsWith('AC') then
+  if (not LMagic.StartsWith('AC')) or
+     (not TryStrToInt(Copy(LMagic, 3, 4), LVersionNumber)) then
     raise EDwgParseError.CreateFmt(
       'Geçersiz DWG başlığı: "%s". Bu bir DWG dosyası değil.', [LMagic]);
 
