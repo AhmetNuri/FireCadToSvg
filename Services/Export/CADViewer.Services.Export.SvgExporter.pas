@@ -118,8 +118,6 @@ begin
     end;
     ABuilder.Append('"');
     AppendStyle(ABuilder, PL.Style);
-    if PL.IsClosed then
-      ABuilder.Append(' fill="rgba(0,0,0,0)"');
     ABuilder.Append('/>').AppendLine;
   end
   else if AShape is TDrawPath then
