@@ -1,4 +1,4 @@
-/// <summary>
+﻿/// <summary>
 /// CADViewer.Parsers.DXF.Reader
 /// Düşük seviye DXF grup kodu okuyucu.
 /// DXF dosyasını (group code, value) çiftleri (token) olarak okur.
@@ -15,6 +15,7 @@ uses
   System.Classes,
   System.SysUtils,
   System.IOUtils,
+  System.Math,
   CADViewer.Core.Interfaces,
   CADViewer.Utils;
 

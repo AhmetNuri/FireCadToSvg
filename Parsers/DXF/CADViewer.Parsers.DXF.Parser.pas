@@ -1,4 +1,4 @@
-/// <summary>
+﻿/// <summary>
 /// CADViewer.Parsers.DXF.Parser
 /// Yüksek seviye DXF ayrıştırıcı (parser).
 /// IDxfReader üzerinden okunan group code/value çiftlerini
@@ -17,6 +17,7 @@ interface
 uses
   System.SysUtils,
   System.Math,
+  System.UITypes,
   System.Generics.Collections,
   CADViewer.Core.Types,
   CADViewer.Core.Interfaces,
@@ -135,7 +136,7 @@ implementation
 
 uses
   System.IOUtils,
-  System.UITypes,
+
   CADViewer.Parsers.STEP.Parser;
 
 // =========================================================================

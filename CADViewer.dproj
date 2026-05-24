@@ -247,6 +247,7 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="Views\uMainFrm.pas">
+            <Form>Form6</Form>
             <FormType>fmx</FormType>
         </DCCReference>
         <DCCReference Include="Controllers\CADViewer.Controllers.DxfViewerController.pas"/>

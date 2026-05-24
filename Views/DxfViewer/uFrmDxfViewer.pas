@@ -162,7 +162,7 @@ begin
   OpenDialog1.Title := 'CAD Dosyası Aç';
 
   // Klavye alabilmek için
-  Self.KeyPreview := True;
+//  Self.KeyPreview := True;
 end;
 
 procedure TFrmDxfViewer.FormDestroy(Sender: TObject);

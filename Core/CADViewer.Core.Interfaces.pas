@@ -1,4 +1,4 @@
-/// <summary>
+﻿/// <summary>
 /// CADViewer.Core.Interfaces
 /// Tüm servis, parser ve renderer arayüzleri.
 /// Open-Closed Principle: Yeni format veya renderer eklemek için
@@ -14,7 +14,10 @@ interface
 uses
   System.Classes,
   System.Generics.Collections,
+    system.SysUtils,
+    System.UITypes,
   CADViewer.Core.Types,
+
   CADViewer.Core.Models.DrawShapes,
   CADViewer.Core.Models.DxfDocument;
 

@@ -1,4 +1,4 @@
-/// <summary>
+﻿/// <summary>
 /// CADViewer.Services.FileServices
 /// Dosya yükleme, encoding tespiti ve doğrulama servisi.
 /// IDxfParser ile birlikte çalışarak dosyayı yükler ve parse eder.
@@ -12,7 +12,9 @@ interface
 uses
   System.SysUtils,
   System.IOUtils,
+  System.Math,
   System.Classes,
+
   CADViewer.Core.Interfaces,
   CADViewer.Core.Types;
 
@@ -222,7 +224,7 @@ end;
 function TFileService.GetFileSize(const AFilePath: string): Int64;
 begin
   try
-    Result := TFileInfo.Create(AFilePath).Length;
+//    Result := TFileInfo.Create(AFilePath).Length;
   except
     Result := 0;
   end;

@@ -1,4 +1,4 @@
-/// <summary>
+﻿/// <summary>
 /// CADViewer.Services.Rendering.DxfRenderer
 /// Skia4Delphi tabanlı yüksek kaliteli DXF renderer.
 /// ICanvasRenderer arayüzünü implement eder.
@@ -17,6 +17,7 @@ uses
   System.UITypes,
   System.Generics.Collections,
   Skia,
+  fmx.Skia,
   CADViewer.Core.Types,
   CADViewer.Core.Interfaces,
   CADViewer.Core.Models.DrawShapes,
@@ -117,7 +118,7 @@ uses
   System.Types;
 
 // Skia renk yardımcısı
-function SkColorFromAlpha(AColor: TAlphaColor): TSkColor;
+function SkColorFromAlpha(AColor: TAlphaColor): TAlphaColor;
 begin
   Result := AColor; // TAlphaColor ile TSkColor aynı ARGB formatı
 end;

@@ -107,6 +107,7 @@ object FrmDxfViewer: TFrmDxfViewer
       end
     end
     object SkPaintBox: TSkPaintBox
+      Align = Client
       Size.Width = 1000.000000000000000000
       Size.Height = 632.000000000000000000
       Size.PlatformDefault = False

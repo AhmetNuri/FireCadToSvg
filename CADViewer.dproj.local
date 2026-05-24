@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.449,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.524,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.065,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.959,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.073,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.296,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.761,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.449,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.436,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.996,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.536,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.472,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.959,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.154,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.347,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.436,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.073,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.467,C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas=D:\Projects\GCodeManager\FireCadToSvg-main\Views\uMainFrm.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.976,=D:\Projects\GCodeManager\FireCadToSvg-main\Core\Models\CADViewer.Core.Models.DrawShapes.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.110,=D:\Projects\GCodeManager\FireCadToSvg-main\Services\Rendering\CADViewer.Services.Rendering.DxfRenderer.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.674,=D:\Projects\GCodeManager\FireCadToSvg-main\Controllers\CADViewer.Controllers.DxfViewerController.pas</Transaction>
@@ -25,24 +25,24 @@
     <Transaction>1899.12.30 00:00:00.000.453,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.000,=D:\Projects\GCodeManager\FireCadToSvg-main\Views\DxfViewer\uFrmDxfViewer.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.717,=D:\Projects\GCodeManager\FireCadToSvg-main\Services\FileServices\CADViewer.Services.FileServices.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.467,C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas=D:\Projects\GCodeManager\FireCadToSvg-main\Views\uMainFrm.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.672,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.002,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit5.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.804,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit5.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.757,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit5.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.333,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit5.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.660,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit5.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.777,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit5.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.327,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit5.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.973,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit5.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.259,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit5.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.863,=D:\Projects\GCodeManager\FireCadToSvg-main\Core\CADViewer.Core.Types.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.757,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit5.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.220,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit5.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.700,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit5.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.327,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit5.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.186,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit5.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.737,=D:\Projects\GCodeManager\FireCadToSvg-main\Core\Entities\CADViewer.Core.Entities.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.999,=D:\Projects\GCodeManager\FireCadToSvg-main\Core\Models\CADViewer.Core.Models.DxfDocument.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.060,=D:\Projects\GCodeManager\FireCadToSvg-main\Services\Transformation\CADViewer.Services.Transformation.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.672,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.472,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit6.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.843,=D:\Projects\GCodeManager\FireCadToSvg-main\Core\CADViewer.Core.Interfaces.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.564,C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Project2.dproj=D:\Projects\GCodeManager\FireCadToSvg-main\CADViewer.dproj</Transaction>
     <Transaction>1899.12.30 00:00:00.000.333,=C:\Users\ahmet\OneDrive - Pamukkale University\Belgeler\Embarcadero\Studio\Projects\Unit5.pas</Transaction>
