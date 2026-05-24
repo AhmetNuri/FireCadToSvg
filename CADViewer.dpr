@@ -14,6 +14,7 @@ uses
   CADViewer.Parsers.STEP.Parser in 'Parsers\STEP\CADViewer.Parsers.STEP.Parser.pas',
   CADViewer.Services.FileServices in 'Services\FileServices\CADViewer.Services.FileServices.pas',
   CADViewer.Services.Rendering.DxfRenderer in 'Services\Rendering\CADViewer.Services.Rendering.DxfRenderer.pas',
+  CADViewer.Services.Export.SvgExporter in 'Services\Export\CADViewer.Services.Export.SvgExporter.pas',
   CADViewer.Services.Transformation in 'Services\Transformation\CADViewer.Services.Transformation.pas',
   CADViewer.Utils in 'Utils\CADViewer.Utils.pas',
   uFrmDxfViewer in 'Views\DxfViewer\uFrmDxfViewer.pas',

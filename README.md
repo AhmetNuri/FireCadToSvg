@@ -1,6 +1,6 @@
 # CADViewer — Delphi FireMonkey DXF Görüntüleyici
 
-Delphi **FireMonkey** + **Skia4Delphi** kullanan, kurumsal standartlarda, tam **MVC** mimarisiyle yazılmış DXF dosyası görüntüleyici.
+Delphi **FireMonkey** + **Skia4Delphi** kullanan, kurumsal standartlarda, tam **MVC** mimarisiyle yazılmış DXF/STEP/IGES dosyası görüntüleyici.
 
 ---
 
@@ -18,17 +18,21 @@ CADViewer/
 │       └── CADViewer.Core.Models.DxfDocument.pas  ← Belge modeli (katmanlar, bloklar, varlıklar)
 │
 ├── Parsers/
-│   └── DXF/
-│       ├── CADViewer.Parsers.DXF.Reader.pas  ← Düşük seviye DXF token okuyucu
-│       └── CADViewer.Parsers.DXF.Parser.pas  ← Yüksek seviye DXF ayrıştırıcı + TParserFactory
+│   ├── DXF/
+│   │   ├── CADViewer.Parsers.DXF.Reader.pas  ← Düşük seviye DXF token okuyucu
+│   │   └── CADViewer.Parsers.DXF.Parser.pas  ← Yüksek seviye DXF ayrıştırıcı + TParserFactory
+│   └── STEP/
+│       └── CADViewer.Parsers.STEP.Parser.pas ← STEP/IGES parser
 │
 ├── Services/
 │   ├── FileServices/
 │   │   └── CADViewer.Services.FileServices.pas        ← Dosya yükleme + encoding tespiti
 │   ├── Transformation/
 │   │   └── CADViewer.Services.Transformation.pas      ← Viewport / Zoom / Pan servisi
-│   └── Rendering/
-│       └── CADViewer.Services.Rendering.DxfRenderer.pas ← Skia4Delphi tabanlı renderer
+│   ├── Rendering/
+│   │   └── CADViewer.Services.Rendering.DxfRenderer.pas ← Skia4Delphi tabanlı renderer
+│   └── Export/
+│       └── CADViewer.Services.Export.SvgExporter.pas    ← Ortak modelden SVG export
 │
 ├── Controllers/
 │   └── CADViewer.Controllers.DxfViewerController.pas  ← MVC Controller
@@ -75,7 +79,9 @@ CADViewer/
 
 ---
 
-## 🎯 Desteklenen DXF Entity'leri
+## 🎯 Desteklenen Formatlar ve Entity'ler
+
+### DXF
 
 | Entity | Durum |
 |--------|-------|
@@ -91,6 +97,18 @@ CADViewer/
 | DIMENSION | ✅ Temel (blok referansı çözümü) |
 | SPLINE | ✅ B-spline yaklaşımı (de Boor) |
 | POINT | ✅ Çapraz sembol |
+
+---
+
+### STEP / IGES (ASCII STEP yapısı)
+
+| Entity | Durum |
+|--------|-------|
+| LINE | ✅ |
+| CIRCLE | ✅ |
+| ARC (TRIMMED_CURVE) | ✅ |
+| POLYLINE | ✅ |
+| SURFACE / EDGE (basitleştirilmiş wireframe) | ✅ |
 
 ---
 
@@ -134,7 +152,7 @@ CADViewer/
 ## 🚀 Gelecek Geliştirmeler
 
 - [ ] DWG format desteği (`TDwgParser` eklenecek, factory hazır)
-- [ ] IGES / STEP format desteği
+- [x] IGES / STEP format desteği
 - [ ] Hatch (tarama) render desteği
 - [ ] Streaming parsing (çok büyük dosyalar için)
 - [ ] Yazdırma / PDF export

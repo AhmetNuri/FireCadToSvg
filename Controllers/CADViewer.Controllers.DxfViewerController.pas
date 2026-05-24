@@ -21,7 +21,8 @@ uses
   CADViewer.Parsers.DXF.Parser,
   CADViewer.Services.FileServices,
   CADViewer.Services.Transformation,
-  CADViewer.Services.Rendering.DxfRenderer;
+  CADViewer.Services.Rendering.DxfRenderer,
+  CADViewer.Services.Export.SvgExporter;
 
 type
 
@@ -37,10 +38,12 @@ type
     FFileService: IFileService;
     FTransformService: ITransformService;
     FRenderer: TSkiaRenderer;
+    FSvgExporter: ISvgExporter;
 
     // --- Durum ---
     FDocument: TDxfDocument;
     FDocumentTitle: string;
+    FLastGeneratedSvg: string;
     FNeedsRedraw: Boolean;
     FIsPanning: Boolean;
     FPanStartX, FPanStartY: Single;
@@ -60,7 +63,8 @@ type
       AParserFactory: IParserFactory;
       AFileService: IFileService;
       ATransformService: ITransformService;
-      ARenderer: TSkiaRenderer);
+      ARenderer: TSkiaRenderer;
+      ASvgExporter: ISvgExporter);
     destructor Destroy; override;
 
     // IViewerController implementasyonu
@@ -88,6 +92,7 @@ type
     property Renderer: TSkiaRenderer read FRenderer;
     property TransformService: ITransformService read FTransformService;
     property Document: TDxfDocument read FDocument;
+    property LastGeneratedSvg: string read FLastGeneratedSvg;
   end;
 
   /// <summary>
@@ -111,16 +116,19 @@ constructor TDxfViewerController.Create(
   AParserFactory: IParserFactory;
   AFileService: IFileService;
   ATransformService: ITransformService;
-  ARenderer: TSkiaRenderer);
+  ARenderer: TSkiaRenderer;
+  ASvgExporter: ISvgExporter);
 begin
   inherited Create;
   FParserFactory   := AParserFactory;
   FFileService     := AFileService;
   FTransformService := ATransformService;
   FRenderer        := ARenderer;
+  FSvgExporter     := ASvgExporter;
   FObservers       := TInterfaceList.Create;
   FNeedsRedraw     := False;
   FIsPanning       := False;
+  FLastGeneratedSvg := '';
 end;
 
 destructor TDxfViewerController.Destroy;
@@ -193,6 +201,7 @@ var
   LParser: IDxfParser;
   LNewDoc: TDxfDocument;
   LFileSize: Int64;
+  LFormat: TCadFileFormat;
 begin
   NotifyStatusChanged('Dosya yükleniyor: ' + TPath.GetFileName(AFilePath));
 
@@ -204,7 +213,8 @@ begin
     NotifyStatusChanged(Format('Dosya boyutu: %.1f KB', [LFileSize / 1024.0]));
 
     // 2. Parser seç ve ayrıştır
-    LParser := FParserFactory.CreateParser(AFilePath);
+    LFormat := FParserFactory.DetectFormat(AFilePath);
+    LParser := FParserFactory.CreateParserForFormat(LFormat);
     LNewDoc := LParser.ParseFile(AFilePath);
 
     // 3. Eski belgeyi serbest bırak
@@ -212,6 +222,15 @@ begin
     FDocument := LNewDoc;
 
     FDocumentTitle := TPath.GetFileName(AFilePath);
+
+    if Assigned(FSvgExporter) then
+    begin
+      if LFormat in [TCadFileFormat.ffStep, TCadFileFormat.ffIges] then
+        FLastGeneratedSvg := FSvgExporter.ExportShapesToSvg(
+          FDocument.Shapes, FDocument.GetBounds)
+      else
+        FLastGeneratedSvg := '';
+    end;
 
     // 4. Renderer'ı güncelle
     FRenderer.SetShapes(FDocument.Shapes);
@@ -396,17 +415,20 @@ var
   LFileService: IFileService;
   LTransformService: ITransformService;
   LRenderer: TSkiaRenderer;
+  LSvgExporter: ISvgExporter;
 begin
   LParserFactory   := TParserFactory.Create;
   LFileService     := TFileService.Create;
   LTransformService := TTransformService.Create;
   LRenderer        := TSkiaRenderer.Create;
+  LSvgExporter     := TSvgExporter.Create;
 
   Result := TDxfViewerController.Create(
     LParserFactory,
     LFileService,
     LTransformService,
-    LRenderer);
+    LRenderer,
+    LSvgExporter);
 end;
 
 end.

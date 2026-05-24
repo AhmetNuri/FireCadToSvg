@@ -88,8 +88,8 @@ type
     ffUnknown,
     ffDxf,
     ffDwg,    // Gelecek destek
-    ffIges,   // Gelecek destek
-    ffStep    // Gelecek destek
+    ffIges,   // STEP parser hattı ile desteklenir
+    ffStep    // Desteklenir
   );
 
   // =========================================================================
