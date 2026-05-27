@@ -368,9 +368,10 @@ begin
       LLine1 := DLines[I];
       LLine2 := DLines[I + 1];
 
-      LEntry.SequenceNo := ParseIntField(Copy(LLine1, 73, 8));
+      // D section: column 73 = 'D' letter, sequence number at columns 74-80
+      LEntry.SequenceNo := ParseIntField(Copy(LLine1, 74, 7));
       if LEntry.SequenceNo = 0 then
-        LEntry.SequenceNo := (I * 2) + 1;
+        LEntry.SequenceNo := I + 1;
       LEntry.EntityType := ParseIntField(Copy(LLine1, 1, 8));
       LEntry.ParamPointer := ParseIntField(Copy(LLine1, 9, 8));
       LEntry.Level := ParseIntField(Copy(LLine1, 33, 8));
@@ -392,17 +393,35 @@ end;
 function TIgesParser.BuildParameterMap(
   const PLines: TArray<string>): TDictionary<Integer, string>;
 var
-  I, LSeq: Integer;
+  I, LSeq, LDEPtr: Integer;
   LData: string;
+  LDEPtrs: TArray<Integer>;
 begin
   Result := TDictionary<Integer, string>.Create;
+  SetLength(LDEPtrs, Length(PLines));
+
+  // First pass: map by P sequence number (columns 74-80, authoritative)
   for I := 0 to High(PLines) do
   begin
     LData := Copy(PLines[I], 1, 64);
-    LSeq := ParseIntField(Copy(PLines[I], 73, 8));
+
+    // P sequence number is at columns 74-80 (column 73 is the 'P' letter)
+    LSeq := ParseIntField(Copy(PLines[I], 74, 7));
     if LSeq = 0 then
       LSeq := I + 1;
     Result.AddOrSetValue(LSeq, LData);
+
+    // Remember DE back-pointer (columns 65-72) for second pass
+    LDEPtrs[I] := ParseIntField(Copy(PLines[I], 65, 8));
+  end;
+
+  // Second pass: also map by DE back-pointer for files that use
+  // ParamPointer = DE sequence number convention (only where no conflict)
+  for I := 0 to High(PLines) do
+  begin
+    LDEPtr := LDEPtrs[I];
+    if (LDEPtr > 0) and (not Result.ContainsKey(LDEPtr)) then
+      Result.AddOrSetValue(LDEPtr, Copy(PLines[I], 1, 64));
   end;
 end;
 
@@ -490,12 +509,16 @@ var
   LShape: TDrawLine;
 begin
   Result := nil;
-  if Length(AEntity.Params) < 6 then
+  if Length(AEntity.Params) < 2 then
     Exit;
 
   LOffset := 0;
   if ParseIntField(NormalizeToken(AEntity.Params[0])) = 110 then
     LOffset := 1;
+
+  // Need at least 6 values after offset (X1,Y1,Z1,X2,Y2,Z2)
+  if LOffset + 5 > High(AEntity.Params) then
+    Exit;
 
   if not TryParseNumberParam(AEntity.Params, LOffset + 0, X1) then Exit;
   if not TryParseNumberParam(AEntity.Params, LOffset + 1, Y1) then Exit;
@@ -517,12 +540,16 @@ var
   LArc: TDrawArc;
 begin
   Result := nil;
-  if Length(AEntity.Params) < 7 then
+  if Length(AEntity.Params) < 2 then
     Exit;
 
   LOffset := 0;
   if ParseIntField(NormalizeToken(AEntity.Params[0])) = 100 then
     LOffset := 1;
+
+  // Need at least 7 values after offset (ZT,XC,YC,XS,YS,XE,YE)
+  if LOffset + 6 > High(AEntity.Params) then
+    Exit;
 
   if not TryParseNumberParam(AEntity.Params, LOffset + 1, XC) then Exit;
   if not TryParseNumberParam(AEntity.Params, LOffset + 2, YC) then Exit;
