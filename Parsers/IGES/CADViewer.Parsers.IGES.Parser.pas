@@ -75,6 +75,8 @@ type
     function BuildPolyline(const AEntity: TIgesEntity): TDrawShape;
     function BuildBsplineApprox(const AEntity: TIgesEntity): TDrawShape;
     function BuildSurfaceApprox(const AEntity: TIgesEntity): TDrawShape;
+    function BuildPoint(const AEntity: TIgesEntity): TDrawShape;
+    function BuildParametricSpline(const AEntity: TIgesEntity): TDrawShape;
 
     procedure CollectReferencedGeometry(ASeq: Integer;
       AVisited: TDictionary<Integer, Boolean>);
@@ -478,7 +480,7 @@ end;
 
 function TIgesParser.IsCurveEntity(AEntityType: Integer): Boolean;
 begin
-  Result := AEntityType in [100, 106, 110, 112, 126];
+  Result := AEntityType in [100, 106, 110, 112, 114, 116, 126];
 end;
 
 function TIgesParser.BuildLine(const AEntity: TIgesEntity): TDrawShape;
@@ -583,14 +585,38 @@ end;
 function TIgesParser.BuildPolyline(const AEntity: TIgesEntity): TDrawShape;
 var
   LNums: TList<Double>;
-  I: Integer;
+  I, LOffset, LIP, LN, LDataStart: Integer;
   V: Double;
   LPL: TDrawPolyline;
 begin
   Result := nil;
+
+  // Entity 106 (Copious Data) format:
+  // params[0] = entity type (106) -- optional
+  // params[offset+0] = IP (interpretation flag: 1=XY, 2=XYZ, 3=XYZ vectors)
+  // params[offset+1] = N (number of data points)
+  // params[offset+2..] = coordinate data
+
+  if Length(AEntity.Params) < 4 then
+    Exit;
+
+  LOffset := 0;
+  if ParseIntField(NormalizeToken(AEntity.Params[0])) = 106 then
+    LOffset := 1;
+
+  if not TryParseNumberParam(AEntity.Params, LOffset, V) then Exit;
+  LIP := Round(V);
+  if not TryParseNumberParam(AEntity.Params, LOffset + 1, V) then Exit;
+  LN := Round(V);
+
+  if LN < 2 then
+    Exit;
+
+  LDataStart := LOffset + 2;
+
   LNums := TList<Double>.Create;
   try
-    for I := 1 to High(AEntity.Params) do
+    for I := LDataStart to High(AEntity.Params) do
       if ParseIgesFloat(NormalizeToken(AEntity.Params[I]), V) then
         LNums.Add(V);
 
@@ -600,22 +626,44 @@ begin
     LPL := TDrawPolyline.Create;
     LPL.Style := MakeDefaultStyle;
 
-    if (LNums.Count mod 3) = 0 then
-    begin
+    // IP=1: 2D points (X,Y pairs)
+    // IP=2: 3D points (X,Y,Z triplets)
+    // IP=3: 3D with direction vectors (X,Y,Z,i,j,k) -- use only position
+    case LIP of
+      1:
+        begin
+          I := 0;
+          while I + 1 < LNums.Count do
+          begin
+            LPL.AddPoint(TPoint2D.Create(LNums[I], LNums[I + 1]));
+            Inc(I, 2);
+          end;
+        end;
+      2:
+        begin
+          I := 0;
+          while I + 2 < LNums.Count do
+          begin
+            LPL.AddPoint(TPoint2D.Create(LNums[I], LNums[I + 1]));
+            Inc(I, 3);
+          end;
+        end;
+      3:
+        begin
+          I := 0;
+          while I + 5 < LNums.Count do
+          begin
+            LPL.AddPoint(TPoint2D.Create(LNums[I], LNums[I + 1]));
+            Inc(I, 6);
+          end;
+        end;
+    else
+      // Default: try 3D triplets
       I := 0;
       while I + 2 < LNums.Count do
       begin
         LPL.AddPoint(TPoint2D.Create(LNums[I], LNums[I + 1]));
         Inc(I, 3);
-      end;
-    end
-    else
-    begin
-      I := 0;
-      while I + 1 < LNums.Count do
-      begin
-        LPL.AddPoint(TPoint2D.Create(LNums[I], LNums[I + 1]));
-        Inc(I, 2);
       end;
     end;
 
@@ -630,65 +678,156 @@ end;
 
 function TIgesParser.BuildBsplineApprox(const AEntity: TIgesEntity): TDrawShape;
 var
-  LNums: TList<Double>;
-  I: Integer;
+  I, LOffset, K, M, LKnotCount, LWeightCount, LCtrlStart: Integer;
   V: Double;
   LPath: TDrawPath;
 begin
   Result := nil;
-  LNums := TList<Double>.Create;
-  try
-    for I := 1 to High(AEntity.Params) do
-      if ParseIgesFloat(NormalizeToken(AEntity.Params[I]), V) then
-        LNums.Add(V);
 
-    if LNums.Count < 6 then
-      Exit;
+  // Entity 126 (Rational B-Spline Curve) format:
+  // params[offset+0] = K (upper index of sum, number of control points = K+1)
+  // params[offset+1] = M (degree of basis functions)
+  // params[offset+2] = PROP1 (planar/non-planar)
+  // params[offset+3] = PROP2 (open/closed)
+  // params[offset+4] = PROP3 (rational/polynomial)
+  // params[offset+5] = PROP4 (periodic/non-periodic)
+  // Then: K+M+2 knot values
+  // Then: K+1 weight values
+  // Then: (K+1) control points as X,Y,Z triplets
+  // Then: V(0), V(1) parameter range
 
-    LPath := TDrawPath.Create;
-    LPath.Style := MakeDefaultStyle;
+  if Length(AEntity.Params) < 7 then
+    Exit;
 
-    I := 0;
-    while I + 2 < LNums.Count do
-    begin
-      LPath.AddPoint(TPoint2D.Create(LNums[I], LNums[I + 1]));
-      Inc(I, 3);
+  LOffset := 0;
+  if ParseIntField(NormalizeToken(AEntity.Params[0])) = 126 then
+    LOffset := 1;
+
+  if not TryParseNumberParam(AEntity.Params, LOffset + 0, V) then Exit;
+  K := Round(V);
+  if not TryParseNumberParam(AEntity.Params, LOffset + 1, V) then Exit;
+  M := Round(V);
+
+  if (K < 1) or (M < 1) then
+    Exit;
+
+  // Calculate offsets
+  LKnotCount := K + M + 2;
+  LWeightCount := K + 1;
+  // Control points start after: 6 header fields + knots + weights
+  LCtrlStart := LOffset + 6 + LKnotCount + LWeightCount;
+
+  // We need at least (K+1) control points * 3 coordinates
+  if LCtrlStart + (K + 1) * 3 > Length(AEntity.Params) then
+  begin
+    // Fallback: try reading as raw coordinate triplets from all data
+    // (backward compatibility for malformed files)
+    var LNums := TList<Double>.Create;
+    try
+      for I := LOffset + 6 + LKnotCount + LWeightCount to High(AEntity.Params) do
+        if ParseIgesFloat(NormalizeToken(AEntity.Params[I]), V) then
+          LNums.Add(V);
+
+      if LNums.Count < 6 then
+        Exit;
+
+      LPath := TDrawPath.Create;
+      LPath.Style := MakeDefaultStyle;
+      I := 0;
+      while I + 2 < LNums.Count do
+      begin
+        LPath.AddPoint(TPoint2D.Create(LNums[I], LNums[I + 1]));
+        Inc(I, 3);
+      end;
+
+      if LPath.PointCount >= 2 then
+        Result := LPath
+      else
+        LPath.Free;
+    finally
+      LNums.Free;
     end;
-
-    if LPath.PointCount >= 2 then
-      Result := LPath
-    else
-      LPath.Free;
-  finally
-    LNums.Free;
+    Exit;
   end;
+
+  LPath := TDrawPath.Create;
+  LPath.Style := MakeDefaultStyle;
+
+  for I := 0 to K do
+  begin
+    var XIdx := LCtrlStart + I * 3;
+    var YIdx := LCtrlStart + I * 3 + 1;
+    var LX: Double;
+    var LY: Double;
+    if TryParseNumberParam(AEntity.Params, XIdx, LX) and
+       TryParseNumberParam(AEntity.Params, YIdx, LY) then
+      LPath.AddPoint(TPoint2D.Create(LX, LY));
+  end;
+
+  if LPath.PointCount >= 2 then
+    Result := LPath
+  else
+    LPath.Free;
 end;
 
 function TIgesParser.BuildSurfaceApprox(const AEntity: TIgesEntity): TDrawShape;
 var
-  LNums: TList<Double>;
-  I: Integer;
+  I, LOffset, K1, K2, M1, M2: Integer;
+  LKnot1Count, LKnot2Count, LWeightCount, LCtrlStart, LCtrlCount: Integer;
   V, X, Y: Double;
   LHasPoint: Boolean;
   LMinX, LMinY, LMaxX, LMaxY: Double;
   LPL: TDrawPolyline;
 begin
   Result := nil;
-  LNums := TList<Double>.Create;
-  try
-    for I := 1 to High(AEntity.Params) do
-      if ParseIgesFloat(NormalizeToken(AEntity.Params[I]), V) then
-        LNums.Add(V);
 
-    if LNums.Count < 6 then
-      Exit;
+  // Entity 128 (Rational B-Spline Surface) format:
+  // params[offset+0] = K1 (upper index in first direction)
+  // params[offset+1] = K2 (upper index in second direction)
+  // params[offset+2] = M1 (degree in first direction)
+  // params[offset+3] = M2 (degree in second direction)
+  // params[offset+4..8] = PROP1-5
+  // Then: (K1+M1+2) + (K2+M2+2) knot values
+  // Then: (K1+1)*(K2+1) weight values
+  // Then: (K1+1)*(K2+1) control points as X,Y,Z
 
-    LHasPoint := False;
-    I := 0;
-    while I + 2 < LNums.Count do
+  if Length(AEntity.Params) < 10 then
+    Exit;
+
+  LOffset := 0;
+  if ParseIntField(NormalizeToken(AEntity.Params[0])) = 128 then
+    LOffset := 1;
+
+  if not TryParseNumberParam(AEntity.Params, LOffset + 0, V) then Exit;
+  K1 := Round(V);
+  if not TryParseNumberParam(AEntity.Params, LOffset + 1, V) then Exit;
+  K2 := Round(V);
+  if not TryParseNumberParam(AEntity.Params, LOffset + 2, V) then Exit;
+  M1 := Round(V);
+  if not TryParseNumberParam(AEntity.Params, LOffset + 3, V) then Exit;
+  M2 := Round(V);
+
+  if (K1 < 1) or (K2 < 1) or (M1 < 1) or (M2 < 1) then
+    Exit;
+
+  LKnot1Count := K1 + M1 + 2;
+  LKnot2Count := K2 + M2 + 2;
+  LCtrlCount := (K1 + 1) * (K2 + 1);
+  LWeightCount := LCtrlCount;
+  // 9 header fields (K1,K2,M1,M2,PROP1..PROP5)
+  LCtrlStart := LOffset + 9 + LKnot1Count + LKnot2Count + LWeightCount;
+
+  // Extract bounding box from control points
+  LHasPoint := False;
+  LMinX := 0; LMaxX := 0; LMinY := 0; LMaxY := 0;
+
+  for I := 0 to LCtrlCount - 1 do
+  begin
+    var XIdx := LCtrlStart + I * 3;
+    var YIdx := LCtrlStart + I * 3 + 1;
+    if TryParseNumberParam(AEntity.Params, XIdx, X) and
+       TryParseNumberParam(AEntity.Params, YIdx, Y) then
     begin
-      X := LNums[I];
-      Y := LNums[I + 1];
       if not LHasPoint then
       begin
         LMinX := X; LMaxX := X; LMinY := Y; LMaxY := Y;
@@ -701,23 +840,173 @@ begin
         LMinY := Min(LMinY, Y);
         LMaxY := Max(LMaxY, Y);
       end;
-      Inc(I, 3);
     end;
-
-    if not LHasPoint then
-      Exit;
-
-    LPL := TDrawPolyline.Create;
-    LPL.Style := MakeDefaultStyle;
-    LPL.IsClosed := True;
-    LPL.AddPoint(TPoint2D.Create(LMinX, LMinY));
-    LPL.AddPoint(TPoint2D.Create(LMaxX, LMinY));
-    LPL.AddPoint(TPoint2D.Create(LMaxX, LMaxY));
-    LPL.AddPoint(TPoint2D.Create(LMinX, LMaxY));
-    Result := LPL;
-  finally
-    LNums.Free;
   end;
+
+  // Fallback: if structured parsing didn't find points, try raw scan
+  if not LHasPoint then
+  begin
+    var LNums := TList<Double>.Create;
+    try
+      for I := 1 to High(AEntity.Params) do
+        if ParseIgesFloat(NormalizeToken(AEntity.Params[I]), V) then
+          LNums.Add(V);
+
+      if LNums.Count < 6 then
+        Exit;
+
+      I := 0;
+      while I + 2 < LNums.Count do
+      begin
+        X := LNums[I];
+        Y := LNums[I + 1];
+        if not LHasPoint then
+        begin
+          LMinX := X; LMaxX := X; LMinY := Y; LMaxY := Y;
+          LHasPoint := True;
+        end
+        else
+        begin
+          LMinX := Min(LMinX, X);
+          LMaxX := Max(LMaxX, X);
+          LMinY := Min(LMinY, Y);
+          LMaxY := Max(LMaxY, Y);
+        end;
+        Inc(I, 3);
+      end;
+    finally
+      LNums.Free;
+    end;
+  end;
+
+  if not LHasPoint then
+    Exit;
+
+  LPL := TDrawPolyline.Create;
+  LPL.Style := MakeDefaultStyle;
+  LPL.IsClosed := True;
+  LPL.AddPoint(TPoint2D.Create(LMinX, LMinY));
+  LPL.AddPoint(TPoint2D.Create(LMaxX, LMinY));
+  LPL.AddPoint(TPoint2D.Create(LMaxX, LMaxY));
+  LPL.AddPoint(TPoint2D.Create(LMinX, LMaxY));
+  Result := LPL;
+end;
+
+function TIgesParser.BuildPoint(const AEntity: TIgesEntity): TDrawShape;
+var
+  LOffset: Integer;
+  X, Y: Double;
+  LPoint: TDrawPoint;
+begin
+  Result := nil;
+
+  // Entity 116 (Point) format:
+  // params[offset+0] = X
+  // params[offset+1] = Y
+  // params[offset+2] = Z
+  // params[offset+3] = display symbol pointer (optional)
+
+  if Length(AEntity.Params) < 3 then
+    Exit;
+
+  LOffset := 0;
+  if ParseIntField(NormalizeToken(AEntity.Params[0])) = 116 then
+    LOffset := 1;
+
+  if not TryParseNumberParam(AEntity.Params, LOffset + 0, X) then Exit;
+  if not TryParseNumberParam(AEntity.Params, LOffset + 1, Y) then Exit;
+
+  LPoint := TDrawPoint.Create;
+  LPoint.Position := TPoint2D.Create(X, Y);
+  LPoint.Style := MakeDefaultStyle;
+  Result := LPoint;
+end;
+
+function TIgesParser.BuildParametricSpline(const AEntity: TIgesEntity): TDrawShape;
+var
+  I, LOffset, CTYPE, H, NDIM, N, LDataStart: Integer;
+  V, T0, T1, AX, BX, CX, DX, AY, BY, CY, DY: Double;
+  LPath: TDrawPath;
+  LSegments, LSteps: Integer;
+  S, DS: Double;
+begin
+  Result := nil;
+
+  // Entity 114 (Parametric Spline Curve) format:
+  // params[offset+0] = CTYPE (spline type: 1=linear, 2=quadratic, 3=cubic)
+  // params[offset+1] = H (degree of continuity)
+  // params[offset+2] = NDIM (number of dimensions, 2 or 3)
+  // params[offset+3] = N (number of segments)
+  // params[offset+4..offset+4+N] = break points T(0)..T(N)
+  // Then for each segment: polynomial coefficients
+  //   For NDIM=2: AX,BX,CX,DX, AY,BY,CY,DY (8 values per segment)
+  //   For NDIM=3: AX,BX,CX,DX, AY,BY,CY,DY, AZ,BZ,CZ,DZ (12 values per segment)
+
+  if Length(AEntity.Params) < 5 then
+    Exit;
+
+  LOffset := 0;
+  if ParseIntField(NormalizeToken(AEntity.Params[0])) = 114 then
+    LOffset := 1;
+
+  if not TryParseNumberParam(AEntity.Params, LOffset + 0, V) then Exit;
+  CTYPE := Round(V);
+  if not TryParseNumberParam(AEntity.Params, LOffset + 1, V) then Exit;
+  H := Round(V);
+  if not TryParseNumberParam(AEntity.Params, LOffset + 2, V) then Exit;
+  NDIM := Round(V);
+  if not TryParseNumberParam(AEntity.Params, LOffset + 3, V) then Exit;
+  N := Round(V);
+
+  if (N < 1) or (NDIM < 2) then
+    Exit;
+
+  // Break points start at offset+4, count = N+1
+  LDataStart := LOffset + 4 + (N + 1);
+
+  // Coefficients per segment: 4 values per dimension (A,B,C,D)
+  LSegments := N;
+
+  LPath := TDrawPath.Create;
+  LPath.Style := MakeDefaultStyle;
+
+  LSteps := 8; // tessellation steps per segment
+
+  for I := 0 to LSegments - 1 do
+  begin
+    var LCoeffStart := LDataStart + I * (NDIM * 4);
+
+    // Read X coefficients: AX, BX, CX, DX
+    if not TryParseNumberParam(AEntity.Params, LCoeffStart + 0, AX) then Continue;
+    if not TryParseNumberParam(AEntity.Params, LCoeffStart + 1, BX) then Continue;
+    if not TryParseNumberParam(AEntity.Params, LCoeffStart + 2, CX) then Continue;
+    if not TryParseNumberParam(AEntity.Params, LCoeffStart + 3, DX) then Continue;
+
+    // Read Y coefficients: AY, BY, CY, DY
+    if not TryParseNumberParam(AEntity.Params, LCoeffStart + 4, AY) then Continue;
+    if not TryParseNumberParam(AEntity.Params, LCoeffStart + 5, BY) then Continue;
+    if not TryParseNumberParam(AEntity.Params, LCoeffStart + 6, CY) then Continue;
+    if not TryParseNumberParam(AEntity.Params, LCoeffStart + 7, DY) then Continue;
+
+    // Get break point values for this segment
+    if not TryParseNumberParam(AEntity.Params, LOffset + 4 + I, T0) then Continue;
+    if not TryParseNumberParam(AEntity.Params, LOffset + 4 + I + 1, T1) then Continue;
+
+    DS := (T1 - T0) / LSteps;
+    var J: Integer;
+    for J := 0 to LSteps do
+    begin
+      S := J * DS;
+      var PX := AX + BX * S + CX * S * S + DX * S * S * S;
+      var PY := AY + BY * S + CY * S * S + DY * S * S * S;
+      LPath.AddPoint(TPoint2D.Create(PX, PY));
+    end;
+  end;
+
+  if LPath.PointCount >= 2 then
+    Result := LPath
+  else
+    LPath.Free;
 end;
 
 procedure TIgesParser.CollectReferencedGeometry(ASeq: Integer;
@@ -734,32 +1023,25 @@ begin
   if not GetEntity(ASeq, LEntity) then
     Exit;
 
-  case LEntity.Dir.EntityType of
-    110:
-      begin
-        LShape := BuildLine(LEntity);
-        if LShape <> nil then AddShape(LShape);
-      end;
-    100:
-      begin
-        LShape := BuildCircle(LEntity);
-        if LShape <> nil then AddShape(LShape);
-      end;
-    106:
-      begin
-        LShape := BuildPolyline(LEntity);
-        if LShape <> nil then AddShape(LShape);
-      end;
-    112, 126:
-      begin
-        LShape := BuildBsplineApprox(LEntity);
-        if LShape <> nil then AddShape(LShape);
-      end;
-    128:
-      begin
-        LShape := BuildSurfaceApprox(LEntity);
-        if LShape <> nil then AddShape(LShape);
-      end;
+  // Skip if already added in the first pass
+  if not FAddedRefs.ContainsKey(ASeq) then
+  begin
+    LShape := nil;
+    case LEntity.Dir.EntityType of
+      110: LShape := BuildLine(LEntity);
+      100: LShape := BuildCircle(LEntity);
+      106: LShape := BuildPolyline(LEntity);
+      112, 114: LShape := BuildParametricSpline(LEntity);
+      116: LShape := BuildPoint(LEntity);
+      126: LShape := BuildBsplineApprox(LEntity);
+      128: LShape := BuildSurfaceApprox(LEntity);
+    end;
+
+    if LShape <> nil then
+    begin
+      AddShape(LShape);
+      FAddedRefs.AddOrSetValue(ASeq, True);
+    end;
   end;
 
   for var P in LEntity.Params do
@@ -785,14 +1067,20 @@ begin
       110: LShape := BuildLine(LEntity);
       100: LShape := BuildCircle(LEntity);
       106: LShape := BuildPolyline(LEntity);
-      112, 126: LShape := BuildBsplineApprox(LEntity);
+      112, 114: LShape := BuildParametricSpline(LEntity);
+      116: LShape := BuildPoint(LEntity);
+      126: LShape := BuildBsplineApprox(LEntity);
       128: LShape := BuildSurfaceApprox(LEntity);
     end;
 
     if LShape <> nil then
+    begin
       AddShape(LShape);
+      FAddedRefs.AddOrSetValue(LSeq, True);
+    end;
   end;
 
+  // Second pass: process composite/structural entities and their references
   for LSeq in FEntityOrder do
   begin
     if not GetEntity(LSeq, LEntity) then
